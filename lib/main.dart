@@ -1,4 +1,4 @@
-import 'package:dict_cat_archives/dashboard.dart';
+import 'package:dict_cat_archives/authentication/login.dart';
 import 'package:dict_cat_archives/firebase_options.dart';
 import 'package:dict_cat_archives/strings.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,8 +19,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: appName,  
-      themeMode: ThemeMode.system,
-      home: const Dashboard(),
+      theme: ThemeData(
+        colorSchemeSeed: Colors.transparent,
+        useMaterial3: true),
+      home: const LoginScreen(),
     );
   }
 }
