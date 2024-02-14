@@ -17,10 +17,22 @@ class CustomDrawer extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     foregroundImage: AssetImage('assets/images/DICT-logo.png'),
                     ),
-                    Text('DICT'),
+                    Text('DICT Catanduanes'),
                   ],
                 )),
           ),
+          ListTile(
+          leading: Icon(Icons.person)  ,
+          title: Text('Profile'),
+          ),
+          ListTile(
+          leading: Icon(Icons.settings)  ,
+          title: Text('Settings'),
+          ),
+          ListTile(
+          leading: Icon(Icons.logout)  ,
+          title: Text('Log out'),
+          )
       ],)
     );
   }
