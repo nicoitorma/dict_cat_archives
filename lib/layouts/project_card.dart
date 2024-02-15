@@ -41,6 +41,7 @@ class ProjectCard extends BaseCard {
                   },
                   errorBuilder: (BuildContext context, Object error,
                       StackTrace? stackTrace) {
+                    print(error.runtimeType);
                     return const SizedBox(
                         height: 100,
                         child: Align(

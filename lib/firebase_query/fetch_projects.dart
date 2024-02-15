@@ -14,7 +14,6 @@ Future<List<Project>> fetchAllProjects() async {
     for (QueryDocumentSnapshot doc in query.docs) {
       String docId = doc.id;
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      print(data['background']);
       projects.add(Project.fromJson(docId, data));
     }
   } catch (err) {
