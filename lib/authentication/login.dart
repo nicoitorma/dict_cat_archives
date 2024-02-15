@@ -1,4 +1,4 @@
-import 'package:dict_cat_archives/dashboard.dart';
+import 'package:dict_cat_archives/routes/dashboard.dart';
 import 'package:dict_cat_archives/strings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return 'Invalid email address.';
       } else if (e.message!.contains('auth/user-not-found')) {
         return 'Password is incorrect.';
-      } else if (e.message!.contains('auth/wrong-password')) {
+      } else if (e.message!.contains('auth/invalid-credential')) {
         return 'Password is incorrect.';
       } else if (e.message!.contains('auth/too-many-requests')) {
         return 'Too many login attempts. Try again later.';

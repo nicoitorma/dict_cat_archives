@@ -9,7 +9,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-   runApp(const MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,14 +18,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: appName,  
-      theme: ThemeData(
-        colorSchemeSeed: Colors.transparent,
-        useMaterial3: true),
-      home: const LoginScreen(),
-    );
+        title: appName,
+        theme: ThemeData(
+          useMaterial3: false,
+          fontFamily: 'Poppins',
+        ),
+        home: const LoginScreen());
+    // home: const Dashboard());
   }
 }
-
-
-
