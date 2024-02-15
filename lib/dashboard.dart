@@ -1,6 +1,7 @@
 import 'package:dict_cat_archives/app_bar.dart';
 import 'package:dict_cat_archives/drawer.dart';
 import 'package:dict_cat_archives/strings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -11,11 +12,19 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    print(auth.currentUser);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: appName),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(email: '${auth.currentUser?.email}'),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView(

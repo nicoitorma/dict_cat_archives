@@ -18,45 +18,44 @@ class _LoginScreenState extends State<LoginScreen> {
   Duration get loginTime => const Duration(milliseconds: 2250);
 
   Future<String?> _authUser(LoginData data) async {
-    String checked = _checkInput(data);
-    if (checked == 'null') {
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: data.name, password: data.password);
-      } on FirebaseAuthException catch (e) {
-        debugPrint(e.message);
-      } catch (e) {
-        debugPrint(e.toString());
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: data.name,
+        password: data.password,
+      );
+      return null;
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      if (e.message!.contains('auth/invalid-email')) {
+        return 'Invalid email address.';
+      } else if (e.message!.contains('auth/user-not-found')) {
+        return 'Password is incorrect.';
+      } else if (e.message!.contains('auth/wrong-password')) {
+        return 'Password is incorrect.';
+      } else if (e.message!.contains('auth/too-many-requests')) {
+        return 'Too many login attempts. Try again later.';
+      } else {
+        return 'Unknown error. Try again later.';
       }
-    } else {
-      return checked;
     }
-    return null;
-  }
-
-  String _checkInput(data) {
-    if (data.name.isEmpty) {
-      return 'User not exists';
-    }
-    if (data.password.isEmpty) {
-      return 'Password does not match';
-    }
-    return 'null';
   }
 
   Future<String?> _signupUser(SignupData data) async {
     try {
-      userCredential = await auth.createUserWithEmailAndPassword(
-          email: data.name!, password: data.password!);
+      await auth.createUserWithEmailAndPassword(
+        email: data.name!,
+        password: data.password!,
+      );
+      return null;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        return 'Email already in use';
+      if (e.message!.contains('auth/email-already-in-use')) {
+        return 'Email already exist.';
+      } else if (e.message!.contains('auth/invalid-email')) {
+        return 'Invalid email.';
+      } else {
+        return 'Unknown error. Try again later.';
       }
-    } catch (e) {
-      debugPrint(e.toString());
     }
-
-    return null;
   }
 
   Future<String> _recoverPassword(String name) {
@@ -74,8 +73,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return FlutterLogin(
       theme: LoginTheme(
           primaryColor: Colors.grey,
+          accentColor: const Color.fromARGB(180, 0, 83, 184),
           buttonTheme: const LoginButtonTheme(backgroundColor: Colors.green),
-          cardTheme: const CardTheme(color: Colors.white)),
+          textFieldStyle: const TextStyle(color: Colors.grey),
+          cardTheme: const CardTheme(
+              color: Colors.white, surfaceTintColor: Colors.white)),
       title: appName,
       logo: const AssetImage('assets/images/DICT-logo.png'),
       onLogin: _authUser,
