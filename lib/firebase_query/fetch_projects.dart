@@ -6,7 +6,7 @@ final db = FirebaseFirestore.instance;
 CollectionReference collection = db.collection('projects');
 
 Future<List<Project>> fetchAllProjects() async {
-  List<Project> projects = [];
+  List<Project> projectsList = [];
   try {
     var query = await collection.get();
 
@@ -14,11 +14,11 @@ Future<List<Project>> fetchAllProjects() async {
     for (QueryDocumentSnapshot doc in query.docs) {
       String docId = doc.id;
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      projects.add(Project.fromJson(docId, data));
+      projectsList.add(Project.fromJson(docId, data));
     }
   } catch (err) {
     debugPrint(err.toString());
   }
 
-  return projects;
+  return projectsList;
 }
