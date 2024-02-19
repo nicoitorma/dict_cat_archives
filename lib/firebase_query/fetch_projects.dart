@@ -3,7 +3,7 @@ import 'package:dict_cat_archives/models/project.dart';
 import 'package:flutter/material.dart';
 
 final db = FirebaseFirestore.instance;
-CollectionReference collection = db.collection('projects');
+CollectionReference collection = db.collection('abouts');
 
 Future<List<Project>> fetchAllProjects() async {
   List<Project> projectsList = [];

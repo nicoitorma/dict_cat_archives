@@ -20,14 +20,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProjectListProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => ProjectListProvider())],
       child: MaterialApp(
         title: appName,
         theme: ThemeData(
           useMaterial3: false,
-          fontFamily: 'Poppins',
+          fontFamily: 'Sans',
         ),
         initialRoute: '/login',
         routes: {'/login': (context) => const LoginScreen()},

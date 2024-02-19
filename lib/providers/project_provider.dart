@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 
 class ProjectListProvider extends ChangeNotifier {
   List<Project> projects = [];
+  Project? selectedProject;
 
   fetchProjects() async {
     List projectList = await fetchAllProjects();
     projects.clear();
 
-    for (var est in projectList) {
-      projects.add(est);
+    for (var proj in projectList) {
+      projects.add(proj);
     }
 
     notifyListeners();

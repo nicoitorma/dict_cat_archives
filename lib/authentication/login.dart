@@ -1,5 +1,4 @@
 import 'package:dict_cat_archives/routes/dashboard.dart';
-import 'package:dict_cat_archives/strings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
@@ -25,13 +24,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       return null;
     } on FirebaseAuthException catch (e) {
-      print(e.message);
       if (e.message!.contains('auth/invalid-email')) {
         return 'Invalid email address.';
-      } else if (e.message!.contains('auth/user-not-found')) {
-        return 'Password is incorrect.';
+      } else if (e.message!.contains('auth/network-request-failed')) {
+        return 'Slow Internet Connection.';
       } else if (e.message!.contains('auth/invalid-credential')) {
-        return 'Password is incorrect.';
+        return 'Invalid Email or Password.';
       } else if (e.message!.contains('auth/too-many-requests')) {
         return 'Too many login attempts. Try again later.';
       } else {
@@ -76,9 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
           accentColor: const Color.fromARGB(180, 0, 83, 184),
           buttonTheme: const LoginButtonTheme(backgroundColor: Colors.green),
           textFieldStyle: const TextStyle(color: Colors.grey),
+          titleStyle: const TextStyle(fontFamily: 'Sans'),
           cardTheme: const CardTheme(
               color: Colors.white, surfaceTintColor: Colors.white)),
-      title: appName,
+      title: 'DICT Archives',
       logo: const AssetImage('assets/images/DICT-logo.png'),
       onLogin: _authUser,
       onSignup: _signupUser,

@@ -8,11 +8,15 @@ Future<List<ProjectInfo>> fetchAllProjectContents(String docId) async {
   DocumentSnapshot documentSnapshot =
       await db.collection('projects').doc(docId).get();
   List<ProjectInfo> projectsContentsList = [];
+
   try {
     if (documentSnapshot.exists) {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
-      projectsContentsList.add(ProjectInfo.fromJson(docId, data));
+      data.forEach((key, item) {
+        var projectInfo = ProjectInfo.fromJson(docId, key, item);
+        projectsContentsList.add(projectInfo);
+      });
     }
   } catch (err) {
     debugPrint(err.toString());

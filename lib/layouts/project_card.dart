@@ -9,37 +9,43 @@ class ProjectCard extends BaseCard {
     return InkWell(
       onTap: onTap,
       child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: const EdgeInsets.all(8),
         elevation: 3,
-        child: Stack(alignment: Alignment.center, children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(30.0),
-                child: AspectRatio(
-                  aspectRatio: 2,
-                  child: Image.asset(
-                    project.background,
-                    fit: BoxFit.contain,
-                    frameBuilder: (BuildContext context, Widget child,
-                        int? frame, bool? wasSynchronouslyLoaded) {
-                      return child;
-                    },
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AspectRatio(
+                    aspectRatio: 2,
+                    child: Image.asset(
+                      project.background,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Center(
+                        child: Text('Error loading image'),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 10.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      project.docId,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(project.docId,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        ]),
+            );
+          },
+        ),
       ),
     );
   }
