@@ -15,7 +15,7 @@ dependencies:
   firebase_core: ^2.25.4
   firebase_core_web:
   flutter_login: ^5.0.0
-  firebase_auth: ^4.17.4
+  firebase_auth:
   cloud_firestore: ^4.15.4
   firebase_storage:
   firebase_ui_auth:
@@ -24,7 +24,6 @@ dependencies:
   provider:
   page_transition:
   image_picker:
-  image_picker_for_web: ^3.0.2
   dotted_border:
 
 dev_dependencies:
