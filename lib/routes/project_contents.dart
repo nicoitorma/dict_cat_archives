@@ -2,8 +2,10 @@ import 'package:dict_cat_archives/layouts/app_bar.dart';
 import 'package:dict_cat_archives/models/project.dart';
 import 'package:dict_cat_archives/models/project_info.dart';
 import 'package:dict_cat_archives/providers/project_content_provider.dart';
+import 'package:dict_cat_archives/routes/activity_details.dart';
 import 'package:dict_cat_archives/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class ProjectContents extends StatefulWidget {
@@ -76,7 +78,13 @@ class _ProjectContentsState extends State<ProjectContents> {
                     rows: value.projectContents.map((content) {
                       return DataRow(cells: [
                         DataCell(InkWell(
-                            onTap: () {},
+                            onTap: () => Navigator.of(context).push(
+                                PageTransition(
+                                    type: PageTransitionType.rightToLeftJoined,
+                                    child:
+                                        ActivityDetails(project: content.title),
+                                    duration: const Duration(milliseconds: 400),
+                                    childCurrent: widget)),
                             child: Text(content.title,
                                 style: const TextStyle(
                                     color: Colors.blue, fontSize: 16)))),
