@@ -4,19 +4,17 @@ String labelSave = 'Save';
 String labelSignOut = 'Sign out';
 String labelDeleteAccount = 'Delete Account';
 String labelContinue = 'Continue';
-String getMunicipalityName(int municipalityIndex) {
-  final municipality = [
-    'Bagamanoc',
-    'Baras',
-    'Bato',
-    'Caramoran',
-    'Gigmoto',
-    'Pandan',
-    'Panganiban',
-    'San Andres',
-    'San Miguel',
-    'Viga',
-    'Virac'
-  ];
-  return municipality[municipalityIndex];
-}
+
+String labelAddInformation = 'Add Information';
+String labelTitle = 'Title of the Activity';
+String labelMunicipality = 'Municipality/City/School';
+String labelDateConducted = 'Date Conducted';
+String labelTime = 'Time';
+String labelDateAccomplished = 'Date Accomplished';
+String labelSector = 'Sector';
+String labelMode = 'Mode';
+String labelResourcePerson = 'Resource Person';
+String labelConductedBy = 'Conducted By';
+String labelMaleParticipants = 'Count of male participants';
+String labelFemaleParticipants = 'Count of female participants';
+String labelClose = 'Close';
