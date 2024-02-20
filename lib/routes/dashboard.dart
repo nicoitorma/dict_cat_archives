@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dict_cat_archives/layouts/app_bar.dart';
 import 'package:dict_cat_archives/layouts/drawer.dart';
 import 'package:dict_cat_archives/layouts/project_card.dart';
@@ -5,8 +7,11 @@ import 'package:dict_cat_archives/models/project.dart';
 import 'package:dict_cat_archives/providers/project_provider.dart';
 import 'package:dict_cat_archives/routes/project_contents.dart';
 import 'package:dict_cat_archives/strings.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -19,11 +24,12 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  late ProjectListProvider provider;
 
   @override
   void initState() {
     super.initState();
-    final provider = Provider.of<ProjectListProvider>(context, listen: false);
+    provider = Provider.of<ProjectListProvider>(context, listen: false);
     provider.fetchProjects();
   }
 
@@ -44,6 +50,8 @@ class _DashboardState extends State<Dashboard> {
                           crossAxisCount = 2;
                         } else if (constraints.maxWidth < 1100) {
                           crossAxisCount = 3;
+                        } else if (value.projects.length % 2 == 0) {
+                          crossAxisCount = value.projects.length / 2 as int;
                         } else {
                           crossAxisCount = value.projects.length;
                         }
@@ -81,6 +89,111 @@ class _DashboardState extends State<Dashboard> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: ((context) => ImageTextPopup(provider: provider)));
+          },
+          child: const Icon(Icons.add)),
+    );
+  }
+}
+
+class ImageTextPopup extends StatefulWidget {
+  final ProjectListProvider provider;
+  const ImageTextPopup({super.key, required this.provider});
+
+  @override
+  ImageTextPopupState createState() => ImageTextPopupState();
+}
+
+class ImageTextPopupState extends State<ImageTextPopup> {
+  TextEditingController project = TextEditingController();
+  File? _image;
+  Uint8List? imageList;
+  final ImagePicker picker = ImagePicker();
+
+  Future getImage() async {
+    if (kIsWeb) {
+      XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        var selected = await image.readAsBytes();
+        setState(() {
+          imageList = selected;
+        });
+      }
+    } else {
+      XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        var selected = File(image.path);
+        setState(() {
+          _image = selected;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('New Project'),
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * .4,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DottedBorder(
+              child: GestureDetector(
+                onTap: getImage,
+                child: AspectRatio(
+                  aspectRatio: 2,
+                  child: imageList != null
+                      ? Image.memory(
+                          imageList!,
+                          fit: BoxFit.contain,
+                        )
+                      : _image != null
+                          ? Image.file(
+                              _image!,
+                              fit: BoxFit.contain,
+                            )
+                          : const Icon(
+                              Icons.add_photo_alternate,
+                              size: 50,
+                            ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: project,
+              decoration: InputDecoration(
+                hintText: labelProjectName,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text(labelClose),
+        ),
+        TextButton(
+          onPressed: () {
+            Project newProject = Project(
+                docId: project.text, image: _image, imageList: imageList);
+            widget.provider.addProject(newProject);
+            Navigator.of(context).pop();
+          },
+          child: Text(labelSave),
+        ),
+      ],
     );
   }
 }

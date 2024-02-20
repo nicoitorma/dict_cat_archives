@@ -16,4 +16,9 @@ class ProjectListProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  addProject(Project project) async {
+    await addNewProject(project);
+    fetchProjects();
+  }
 }

@@ -21,13 +21,30 @@ class ProjectCard extends BaseCard {
                 children: [
                   AspectRatio(
                     aspectRatio: 2,
-                    child: Image.asset(
-                      project.background,
+                    child: Image.network(
+                      project.background!,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Center(
-                        child: Text('Error loading image'),
-                      ),
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    (loadingProgress.expectedTotalBytes ?? 1)
+                                : null,
+                          );
+                        }
+                      },
+                      errorBuilder: (BuildContext context, Object error,
+                          StackTrace? stackTrace) {
+                        return const SizedBox(
+                            height: 100,
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Text('Error loading image')));
+                      },
                     ),
                   ),
                   const SizedBox(height: 10.0),

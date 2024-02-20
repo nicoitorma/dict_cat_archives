@@ -25,6 +25,7 @@ dependencies:
   page_transition:
   image_picker:
   image_picker_for_web: ^3.0.2
+  dotted_border:
 
 dev_dependencies:
   flutter_test:

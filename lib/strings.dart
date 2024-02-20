@@ -4,6 +4,10 @@ String labelSave = 'Save';
 String labelSignOut = 'Sign out';
 String labelDeleteAccount = 'Delete Account';
 String labelContinue = 'Continue';
+String labelProjectName = 'Project Name';
+
+String labelProjectCollection = 'projects';
+String labelAboutsCollection = 'abouts';
 
 String labelAddInformation = 'Add Information';
 String labelTitle = 'Title of the Activity';

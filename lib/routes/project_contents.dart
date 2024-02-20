@@ -1,9 +1,10 @@
-import 'package:dict_cat_archives/firebase_query/fetch_project_contents.dart';
 import 'package:dict_cat_archives/layouts/app_bar.dart';
 import 'package:dict_cat_archives/models/project.dart';
 import 'package:dict_cat_archives/models/project_info.dart';
+import 'package:dict_cat_archives/providers/project_content_provider.dart';
 import 'package:dict_cat_archives/strings.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProjectContents extends StatefulWidget {
   const ProjectContents({super.key, required this.project});
@@ -15,6 +16,15 @@ class ProjectContents extends StatefulWidget {
 
 class _ProjectContentsState extends State<ProjectContents> {
   TextStyle header = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  TextStyle rowData = const TextStyle(fontSize: 16);
+  late ProjectContentsProvider provider;
+
+  @override
+  void initState() {
+    super.initState();
+    provider = Provider.of<ProjectContentsProvider>(context, listen: false);
+    provider.fetchProjectContents(widget.project.docId);
+  }
 
   @override
   void dispose() {
@@ -35,52 +45,62 @@ class _ProjectContentsState extends State<ProjectContents> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: widget.project.docId),
-      body: FutureBuilder(
-        future: fetchAllProjectContents(widget.project.docId),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          List<ProjectInfo> projectList = snapshot.data!;
+      body: Consumer<ProjectContentsProvider>(
+        builder: (context, value, child) {
           return Align(
             alignment: Alignment.topCenter,
-            child: Card(
-              elevation: 3,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  horizontalMargin: 10,
-                  columns: [
-                    DataColumn(label: Text(labelTitle, style: header)),
-                    DataColumn(label: Text(labelDateConducted, style: header)),
-                    DataColumn(
-                        label: Text(labelDateAccomplished, style: header)),
-                    DataColumn(label: Text(labelTime, style: header)),
-                    DataColumn(label: Text(labelMunicipality, style: header)),
-                    DataColumn(label: Text(labelSector, style: header)),
-                    DataColumn(label: Text(labelMode, style: header)),
-                    DataColumn(label: Text(labelConductedBy, style: header)),
-                    DataColumn(label: Text(labelResourcePerson, style: header)),
-                    DataColumn(label: Text('Male Count', style: header)),
-                    DataColumn(label: Text('Female Count', style: header)),
-                  ],
-                  rows: projectList.map((content) {
-                    return DataRow(cells: [
-                      DataCell(
-                          InkWell(onTap: () {}, child: Text(content.title))),
-                      DataCell(Text(content.dateConducted.toString())),
-                      DataCell(Text(content.dateAccomplished.toString())),
-                      DataCell(Text(content.time.toString())),
-                      DataCell(Text(content.municipality.toString())),
-                      DataCell(Text(content.sector.toString())),
-                      DataCell(Text(content.mode.toString())),
-                      DataCell(Text(content.conductedBy.toString())),
-                      DataCell(Text(content.resourcePerson.toString())),
-                      DataCell(Text(content.maleCount.toString())),
-                      DataCell(Text(content.femaleCount.toString())),
-                    ]);
-                  }).toList(),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                elevation: 3,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    horizontalMargin: 10,
+                    columns: [
+                      DataColumn(label: Text(labelTitle, style: header)),
+                      DataColumn(
+                          label: Text(labelDateConducted, style: header)),
+                      DataColumn(
+                          label: Text(labelDateAccomplished, style: header)),
+                      DataColumn(label: Text(labelTime, style: header)),
+                      DataColumn(label: Text(labelMunicipality, style: header)),
+                      DataColumn(label: Text(labelSector, style: header)),
+                      DataColumn(label: Text(labelMode, style: header)),
+                      DataColumn(label: Text(labelConductedBy, style: header)),
+                      DataColumn(
+                          label: Text(labelResourcePerson, style: header)),
+                      DataColumn(label: Text('Male Count', style: header)),
+                      DataColumn(label: Text('Female Count', style: header)),
+                    ],
+                    rows: value.projectContents.map((content) {
+                      return DataRow(cells: [
+                        DataCell(InkWell(
+                            onTap: () {},
+                            child: Text(content.title,
+                                style: const TextStyle(
+                                    color: Colors.blue, fontSize: 16)))),
+                        DataCell(Text(content.dateConducted.toString(),
+                            style: rowData)),
+                        DataCell(Text(content.dateAccomplished.toString(),
+                            style: rowData)),
+                        DataCell(Text(content.time.toString(), style: rowData)),
+                        DataCell(Text(content.municipality.toString(),
+                            style: rowData)),
+                        DataCell(
+                            Text(content.sector.toString(), style: rowData)),
+                        DataCell(Text(content.mode.toString(), style: rowData)),
+                        DataCell(Text(content.conductedBy.toString(),
+                            style: rowData)),
+                        DataCell(Text(content.resourcePerson.toString(),
+                            style: rowData)),
+                        DataCell(
+                            Text(content.maleCount.toString(), style: rowData)),
+                        DataCell(Text(content.femaleCount.toString(),
+                            style: rowData)),
+                      ]);
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
@@ -89,7 +109,7 @@ class _ProjectContentsState extends State<ProjectContents> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _addProjectContent(context);
+            _addActivity(context);
           },
           child: const Icon(Icons.add)),
     );
@@ -107,14 +127,14 @@ class _ProjectContentsState extends State<ProjectContents> {
   TextEditingController male = TextEditingController();
   TextEditingController female = TextEditingController();
 
-  void _addProjectContent(BuildContext context) {
+  void _addActivity(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(labelAddInformation),
           content: SizedBox(
-            width: MediaQuery.of(context).size.width / .6,
+            width: MediaQuery.of(context).size.width * .6,
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -186,21 +206,48 @@ class _ProjectContentsState extends State<ProjectContents> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 10),
                   Row(
                     children: <Widget>[
                       Flexible(
-                        child: TextField(
-                            decoration: InputDecoration(
-                                labelText: labelMaleParticipants),
-                            controller: male),
-                      ),
+                          child: TextField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: labelFemaleParticipants,
+                        ),
+                        controller: male,
+                        onChanged: (value) {
+                          value = value.replaceAll(RegExp(r'[^0-9]'), '');
+                          if (value.length > 5) {
+                            value = value.substring(0, 5);
+                          }
+                          male.value = TextEditingValue(
+                            text: value,
+                            selection:
+                                TextSelection.collapsed(offset: value.length),
+                          );
+                        },
+                      )),
                       const SizedBox(width: 10),
                       Flexible(
-                        child: TextField(
-                            decoration: InputDecoration(
-                                labelText: labelFemaleParticipants),
-                            controller: female),
-                      ),
+                          child: TextField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: labelFemaleParticipants,
+                        ),
+                        controller: female,
+                        onChanged: (value) {
+                          value = value.replaceAll(RegExp(r'[^0-9]'), '');
+                          if (value.length > 6) {
+                            value = value.substring(0, 5);
+                          }
+                          female.value = TextEditingValue(
+                            text: value,
+                            selection:
+                                TextSelection.collapsed(offset: value.length),
+                          );
+                        },
+                      )),
                     ],
                   ),
                 ],
@@ -285,16 +332,35 @@ class _ProjectContentsState extends State<ProjectContents> {
   }
 
   void _saveInformation(BuildContext context) {
-    // Retrieving values from text fields and printing
-    print("Title: ${title.text}");
-    print("Date Conducted: ${dateConducted.text}");
-    print("Time: ${time.text}");
-    print("Date Accomplished: ${dateAccomplished.text}");
-    print("Sector: ${sector.text}");
-    print("Mode: $_selectedMode");
-    print("Resource Person: ${resource.text}");
-    print("Conducted By: ${conducted.text}");
+    ProjectInfo projectInfo = ProjectInfo(
+        docId: widget.project.docId,
+        title: title.text,
+        dateConducted: dateConducted.text,
+        dateAccomplished: dateAccomplished.text,
+        time: time.text,
+        municipality: municipality.text,
+        sector: sector.text,
+        mode: _selectedMode,
+        resourcePerson: resource.text,
+        conductedBy: conducted.text,
+        maleCount: int.tryParse(male.text),
+        femaleCount: int.tryParse(female.text));
 
-    Navigator.of(context).pop(); // Close the dialog
+    provider.addProjectContent(projectInfo);
+    clearTextFields();
+    Navigator.of(context).pop();
+  }
+
+  void clearTextFields() {
+    title.clear();
+    dateConducted.clear();
+    dateAccomplished.clear();
+    municipality.clear();
+    time.clear();
+    sector.clear();
+    resource.clear();
+    conducted.clear();
+    male.clear();
+    female.clear();
   }
 }
