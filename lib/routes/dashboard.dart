@@ -97,13 +97,13 @@ class _DashboardState extends State<Dashboard> {
                                                   onPressed: () =>
                                                       Navigator.of(context)
                                                           .pop(),
-                                                  child: const Text('Cancel')),
+                                                  child: Text(labelCancel)),
                                               TextButton(
                                                   onPressed: () {
                                                     value.deleteProject(proj);
                                                     Navigator.of(context).pop();
                                                   },
-                                                  child: const Text('Delete')),
+                                                  child: Text(labelDelete)),
                                             ],
                                           ));
                                 },

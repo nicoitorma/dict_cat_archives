@@ -22,6 +22,15 @@ class ProjectContentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteActivity(List<ActivityInfo> activityInfo, int count) async {
+    for (var activity in activityInfo) {
+      projectContents.remove(activity);
+      await deleteActivityOnFirebase(activity, count, activityInfo.length);
+    }
+
+    notifyListeners();
+  }
+
   void uploadPhoto(ActivityInfo activity, var photo) async {
     await addPhotoInActivity(activity, photo);
     fetchProjectContents(activity.docId);

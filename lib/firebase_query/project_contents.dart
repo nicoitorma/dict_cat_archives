@@ -66,6 +66,27 @@ addPhotoInActivity(ActivityInfo activityInfo, var photo) async {
   }
 }
 
+deleteActivityOnFirebase(
+    ActivityInfo activityInfo, int count, int length) async {
+  try {
+    DocumentReference documentReference = FirebaseFirestore.instance
+        .collection(labelProjectCollection)
+        .doc(activityInfo.docId);
+
+    // Update document with field mask to remove the specified field
+    await documentReference.update({
+      activityInfo.title: FieldValue.delete(),
+    });
+
+    await db
+        .collection(labelAboutsCollection)
+        .doc(activityInfo.docId)
+        .update({'count': count - length});
+  } catch (e) {
+    debugPrint(e.toString());
+  }
+}
+
 Future uploadImage(String title, int index, var image) async {
   if (image == null) return;
 

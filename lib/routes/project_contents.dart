@@ -19,7 +19,7 @@ class _ProjectContentsState extends State<ProjectContents> {
   TextStyle rowData = const TextStyle(fontSize: 16);
   late ProjectContentsProvider provider;
   bool selectAll = false;
-  List selected = [];
+  List<ActivityInfo> selected = [];
 
   @override
   void initState() {
@@ -49,10 +49,33 @@ class _ProjectContentsState extends State<ProjectContents> {
       return Scaffold(
         appBar: CustomAppBar(
           title: widget.project.docId,
-          actions: const [
+          actions: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Icon(Icons.delete),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: const Text('Delete Item'),
+                              content: const Text(
+                                  'Are you sure to delete the selected items?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: Text(labelCancel)),
+                                TextButton(
+                                    onPressed: () {
+                                      value.deleteActivity(selected,
+                                          value.projectContents.length);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(labelDelete)),
+                              ],
+                            ));
+                  },
+                  child: const Icon(Icons.delete)),
             ),
           ],
         ),
@@ -71,22 +94,16 @@ class _ProjectContentsState extends State<ProjectContents> {
                         label: Checkbox(
                           value: selectAll,
                           onChanged: (newValue) {
-                            print('Onchanged: $newValue');
-                            selectAll = newValue!;
-                            for (var content in value.projectContents) {
-                              content.isChecked = selectAll;
-                              if (content.isChecked) {
-                                selected.add(content.title);
-                              } else {
-                                selected.clear();
-                              }
-                            }
-
                             setState(() {
-                              selectAll = newValue;
-                              print(selected);
+                              selectAll = newValue!;
+                              selected.clear();
+                              for (var content in value.projectContents) {
+                                content.isChecked = selectAll;
+                                if (content.isChecked) {
+                                  selected.add(content);
+                                }
+                              }
                             });
-                            print('Onchanged: $newValue');
                           },
                         ),
                       ),
@@ -116,9 +133,9 @@ class _ProjectContentsState extends State<ProjectContents> {
                                   setState(() {
                                     content.isChecked = newValue!;
                                     if (newValue == true) {
-                                      selected.add(content.title);
+                                      selected.add(content);
                                     } else {
-                                      selected.remove(content.title);
+                                      selected.remove(content);
                                     }
                                   });
                                 },

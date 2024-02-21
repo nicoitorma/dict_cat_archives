@@ -22,3 +22,5 @@ String labelConductedBy = 'Conducted By';
 String labelMaleParticipants = 'Count of male participants';
 String labelFemaleParticipants = 'Count of female participants';
 String labelClose = 'Close';
+String labelCancel = 'Cancel';
+String labelDelete = 'Delete';
