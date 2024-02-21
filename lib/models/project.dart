@@ -6,10 +6,17 @@ class Project {
   String? background;
   File? image;
   Uint8List? imageList;
+  int? count;
 
-  Project({required this.docId, this.background, this.image, this.imageList});
+  Project(
+      {required this.docId,
+      this.background,
+      this.image,
+      this.imageList,
+      this.count});
 
   Project.fromJson(String doc, Map<String, dynamic> item)
       : docId = doc,
-        background = item['background'] ?? '';
+        background = item['background'] ?? '',
+        count = item['count'];
 }

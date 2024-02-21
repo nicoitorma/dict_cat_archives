@@ -1,11 +1,9 @@
 import 'package:dict_cat_archives/layouts/app_bar.dart';
+import 'package:dict_cat_archives/models/activity_info.dart';
 import 'package:dict_cat_archives/models/project.dart';
-import 'package:dict_cat_archives/models/project_info.dart';
 import 'package:dict_cat_archives/providers/project_content_provider.dart';
-import 'package:dict_cat_archives/routes/activity_details.dart';
 import 'package:dict_cat_archives/strings.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class ProjectContents extends StatefulWidget {
@@ -20,6 +18,8 @@ class _ProjectContentsState extends State<ProjectContents> {
   TextStyle header = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   TextStyle rowData = const TextStyle(fontSize: 16);
   late ProjectContentsProvider provider;
+  bool selectAll = false;
+  List selected = [];
 
   @override
   void initState() {
@@ -45,21 +45,51 @@ class _ProjectContentsState extends State<ProjectContents> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(title: widget.project.docId),
-      body: Consumer<ProjectContentsProvider>(
-        builder: (context, value, child) {
-          return Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                elevation: 3,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
+    return Consumer<ProjectContentsProvider>(builder: (context, value, child) {
+      return Scaffold(
+        appBar: CustomAppBar(
+          title: widget.project.docId,
+          actions: const [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Icon(Icons.delete),
+            ),
+          ],
+        ),
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              elevation: 3,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
                     horizontalMargin: 10,
                     columns: [
+                      DataColumn(
+                        label: Checkbox(
+                          value: selectAll,
+                          onChanged: (newValue) {
+                            print('Onchanged: $newValue');
+                            selectAll = newValue!;
+                            for (var content in value.projectContents) {
+                              content.isChecked = selectAll;
+                              if (content.isChecked) {
+                                selected.add(content.title);
+                              } else {
+                                selected.clear();
+                              }
+                            }
+
+                            setState(() {
+                              selectAll = newValue;
+                              print(selected);
+                            });
+                            print('Onchanged: $newValue');
+                          },
+                        ),
+                      ),
                       DataColumn(label: Text(labelTitle, style: header)),
                       DataColumn(
                           label: Text(labelDateConducted, style: header)),
@@ -75,52 +105,62 @@ class _ProjectContentsState extends State<ProjectContents> {
                       DataColumn(label: Text('Male Count', style: header)),
                       DataColumn(label: Text('Female Count', style: header)),
                     ],
-                    rows: value.projectContents.map((content) {
-                      return DataRow(cells: [
-                        DataCell(InkWell(
-                            onTap: () => Navigator.of(context).push(
-                                PageTransition(
-                                    type: PageTransitionType.rightToLeftJoined,
-                                    child:
-                                        ActivityDetails(project: content.title),
-                                    duration: const Duration(milliseconds: 400),
-                                    childCurrent: widget)),
-                            child: Text(content.title,
-                                style: const TextStyle(
-                                    color: Colors.blue, fontSize: 16)))),
-                        DataCell(Text(content.dateConducted.toString(),
-                            style: rowData)),
-                        DataCell(Text(content.dateAccomplished.toString(),
-                            style: rowData)),
-                        DataCell(Text(content.time.toString(), style: rowData)),
-                        DataCell(Text(content.municipality.toString(),
-                            style: rowData)),
-                        DataCell(
-                            Text(content.sector.toString(), style: rowData)),
-                        DataCell(Text(content.mode.toString(), style: rowData)),
-                        DataCell(Text(content.conductedBy.toString(),
-                            style: rowData)),
-                        DataCell(Text(content.resourcePerson.toString(),
-                            style: rowData)),
-                        DataCell(
-                            Text(content.maleCount.toString(), style: rowData)),
-                        DataCell(Text(content.femaleCount.toString(),
-                            style: rowData)),
-                      ]);
-                    }).toList(),
-                  ),
-                ),
+                    rows: value.projectContents.map(
+                      (content) {
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Checkbox(
+                                value: content.isChecked,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    content.isChecked = newValue!;
+                                    if (newValue == true) {
+                                      selected.add(content.title);
+                                    } else {
+                                      selected.remove(content.title);
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            DataCell(Text(content.title,
+                                style: const TextStyle(fontSize: 16))),
+                            DataCell(Text(content.dateConducted.toString(),
+                                style: rowData)),
+                            DataCell(Text(content.dateAccomplished.toString(),
+                                style: rowData)),
+                            DataCell(
+                                Text(content.time.toString(), style: rowData)),
+                            DataCell(Text(content.municipality.toString(),
+                                style: rowData)),
+                            DataCell(Text(content.sector.toString(),
+                                style: rowData)),
+                            DataCell(
+                                Text(content.mode.toString(), style: rowData)),
+                            DataCell(Text(content.conductedBy.toString(),
+                                style: rowData)),
+                            DataCell(Text(content.resourcePerson.toString(),
+                                style: rowData)),
+                            DataCell(Text(content.maleCount.toString(),
+                                style: rowData)),
+                            DataCell(Text(content.femaleCount.toString(),
+                                style: rowData)),
+                          ],
+                        );
+                      },
+                    ).toList()),
               ),
             ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _addActivity(context);
-          },
-          child: const Icon(Icons.add)),
-    );
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _addActivity(context);
+            },
+            child: const Icon(Icons.add)),
+      );
+    });
   }
 
   String? _selectedMode;
@@ -154,16 +194,16 @@ class _ProjectContentsState extends State<ProjectContents> {
                   Row(
                     children: <Widget>[
                       Flexible(
-                        child: _buildDatePicker(
+                        child: buildDatePicker(
                             context, labelDateConducted, dateConducted),
                       ),
                       const SizedBox(width: 10),
                       Flexible(
-                          child: _buildTimePicker(context, labelTime, time)),
+                          child: buildTimePicker(context, labelTime, time)),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  _buildDatePicker(
+                  buildDatePicker(
                       context, labelDateAccomplished, dateAccomplished),
                   const SizedBox(height: 10),
                   TextField(
@@ -269,7 +309,7 @@ class _ProjectContentsState extends State<ProjectContents> {
             ),
             ElevatedButton(
               onPressed: () {
-                _saveInformation(context);
+                saveInformation(context);
               },
               child: Text(labelSave),
             ),
@@ -279,13 +319,13 @@ class _ProjectContentsState extends State<ProjectContents> {
     );
   }
 
-  Widget _buildDatePicker(BuildContext context, String labelText,
+  Widget buildDatePicker(BuildContext context, String labelText,
       TextEditingController controller) {
     return TextField(
       controller: controller,
       readOnly: true,
       onTap: () {
-        _selectDate(context, labelText, controller);
+        selectDate(context, labelText, controller);
       },
       decoration: InputDecoration(
         labelText: labelText,
@@ -294,7 +334,7 @@ class _ProjectContentsState extends State<ProjectContents> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context, String labelText,
+  Future<void> selectDate(BuildContext context, String labelText,
       TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -309,13 +349,13 @@ class _ProjectContentsState extends State<ProjectContents> {
     }
   }
 
-  Widget _buildTimePicker(BuildContext context, String labelText,
+  Widget buildTimePicker(BuildContext context, String labelText,
       TextEditingController controller) {
     return TextField(
       controller: controller,
       readOnly: true,
       onTap: () {
-        _selectTime(context, labelText, controller);
+        selectTime(context, labelText, controller);
       },
       decoration: InputDecoration(
         labelText: labelText,
@@ -324,7 +364,7 @@ class _ProjectContentsState extends State<ProjectContents> {
     );
   }
 
-  Future<void> _selectTime(BuildContext context, String labelText,
+  Future<void> selectTime(BuildContext context, String labelText,
       TextEditingController controller) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -339,8 +379,8 @@ class _ProjectContentsState extends State<ProjectContents> {
     }
   }
 
-  void _saveInformation(BuildContext context) {
-    ProjectInfo projectInfo = ProjectInfo(
+  void saveInformation(BuildContext context) {
+    ActivityInfo projectInfo = ActivityInfo(
         docId: widget.project.docId,
         title: title.text,
         dateConducted: dateConducted.text,
@@ -354,7 +394,7 @@ class _ProjectContentsState extends State<ProjectContents> {
         maleCount: int.tryParse(male.text),
         femaleCount: int.tryParse(female.text));
 
-    provider.addProjectContent(projectInfo);
+    provider.addProjectContent(projectInfo, widget.project.count!);
     clearTextFields();
     Navigator.of(context).pop();
   }

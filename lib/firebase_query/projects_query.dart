@@ -33,9 +33,23 @@ addNewProject(Project project) async {
     await db
         .collection(labelAboutsCollection)
         .doc(project.docId)
-        .set({'background': imageUrl});
+        .set({'background': imageUrl, 'count': 0});
   } catch (err) {
     debugPrint(err.toString());
+  }
+}
+
+deleteProjectOnFirebase(Project project) async {
+  try {
+    DocumentReference projectRef =
+        db.collection(labelProjectCollection).doc(project.docId);
+    DocumentReference aboutRef =
+        db.collection(labelAboutsCollection).doc(project.docId);
+
+    await projectRef.delete();
+    await aboutRef.delete();
+  } catch (e) {
+    debugPrint(e.toString());
   }
 }
 

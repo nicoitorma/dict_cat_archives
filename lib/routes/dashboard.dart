@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dict_cat_archives/layouts/app_bar.dart';
+import 'package:dict_cat_archives/layouts/bar_graph.dart';
 import 'package:dict_cat_archives/layouts/drawer.dart';
 import 'package:dict_cat_archives/layouts/project_card.dart';
 import 'package:dict_cat_archives/models/project.dart';
@@ -43,6 +44,14 @@ class _DashboardState extends State<Dashboard> {
           return Column(
             children: [
               Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Card(
+                    elevation: 3,
+                    child: ActivityChart(project: value.projects)),
+              )),
+              Expanded(
+                flex: 2,
                 child: (value.projects.length > 1)
                     ? LayoutBuilder(builder: (context, constraints) {
                         int crossAxisCount;
@@ -50,10 +59,8 @@ class _DashboardState extends State<Dashboard> {
                           crossAxisCount = 2;
                         } else if (constraints.maxWidth < 1100) {
                           crossAxisCount = 3;
-                        } else if (value.projects.length % 2 == 0) {
-                          crossAxisCount = value.projects.length / 2 as int;
                         } else {
-                          crossAxisCount = value.projects.length;
+                          crossAxisCount = 7;
                         }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -68,15 +75,39 @@ class _DashboardState extends State<Dashboard> {
                             itemBuilder: (context, index) {
                               Project proj = value.projects[index];
                               return ProjectCard(
-                                  project: proj,
-                                  onTap: () => Navigator.of(context).push(
-                                      PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftJoined,
-                                          child: ProjectContents(project: proj),
-                                          duration:
-                                              const Duration(milliseconds: 400),
-                                          childCurrent: widget)));
+                                project: proj,
+                                onTap: () => Navigator.of(context).push(
+                                    PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftJoined,
+                                        child: ProjectContents(project: proj),
+                                        duration:
+                                            const Duration(milliseconds: 400),
+                                        childCurrent: widget)),
+                                deleteOnTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                            title: Text(
+                                                'Are you sure to delete ${proj.docId}?'),
+                                            content: const Text(
+                                                'Deleting a project will remove all of its contents'),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
+                                                  child: const Text('Cancel')),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    value.deleteProject(proj);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Delete')),
+                                            ],
+                                          ));
+                                },
+                              );
                             },
                           ),
                         );
@@ -144,9 +175,9 @@ class ImageTextPopupState extends State<ImageTextPopup> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DottedBorder(
-              child: GestureDetector(
-                onTap: getImage,
+            GestureDetector(
+              onTap: getImage,
+              child: DottedBorder(
                 child: AspectRatio(
                   aspectRatio: 2,
                   child: imageList != null

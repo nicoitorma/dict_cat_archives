@@ -1,9 +1,9 @@
-import 'package:dict_cat_archives/firebase_query/fetch_project_contents.dart';
-import 'package:dict_cat_archives/models/project_info.dart';
+import 'package:dict_cat_archives/firebase_query/project_contents.dart';
+import 'package:dict_cat_archives/models/activity_info.dart';
 import 'package:flutter/material.dart';
 
 class ProjectContentsProvider extends ChangeNotifier {
-  List<ProjectInfo> projectContents = [];
+  List<ActivityInfo> projectContents = [];
 
   fetchProjectContents(String docId) async {
     List projectContentsList = await fetchAllProjectContents(docId);
@@ -16,9 +16,14 @@ class ProjectContentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addProjectContent(ProjectInfo projectInfo) async {
-    await addProjectToFirebase(projectInfo);
+  void addProjectContent(ActivityInfo projectInfo, int count) async {
+    await addProjectToFirebase(projectInfo, count);
     projectContents.add(projectInfo);
     notifyListeners();
+  }
+
+  void uploadPhoto(ActivityInfo activity, var photo) async {
+    await addPhotoInActivity(activity, photo);
+    fetchProjectContents(activity.docId);
   }
 }

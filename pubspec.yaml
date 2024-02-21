@@ -25,6 +25,7 @@ dependencies:
   page_transition:
   image_picker:
   dotted_border:
+  fl_chart:
 
 dev_dependencies:
   flutter_test:

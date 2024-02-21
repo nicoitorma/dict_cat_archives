@@ -1,4 +1,4 @@
-class ProjectInfo {
+class ActivityInfo {
   String docId;
   String title;
   String? dateConducted;
@@ -11,8 +11,10 @@ class ProjectInfo {
   String? resourcePerson;
   int? maleCount;
   int? femaleCount;
+  List<String>? images;
+  bool isChecked = false;
 
-  ProjectInfo(
+  ActivityInfo(
       {required this.docId,
       required this.title,
       this.dateConducted,
@@ -24,9 +26,10 @@ class ProjectInfo {
       this.conductedBy,
       this.resourcePerson,
       this.maleCount,
-      this.femaleCount});
+      this.femaleCount,
+      this.images});
 
-  ProjectInfo.fromJson(String doc, String key, Map<String, dynamic> item)
+  ActivityInfo.fromJson(String doc, String key, Map<String, dynamic> item)
       : docId = doc,
         title = key,
         dateConducted = item['dateConducted'] ?? '',
@@ -38,5 +41,6 @@ class ProjectInfo {
         conductedBy = item['conductedBy'] ?? '',
         resourcePerson = item['resourcePerson'] ?? '',
         maleCount = item['maleCount'] ?? 0,
-        femaleCount = item['femaleCount'] ?? 0;
+        femaleCount = item['femaleCount'] ?? 0,
+        images = item['images'];
 }
