@@ -8,14 +8,16 @@ import 'package:flutter/material.dart';
 final db = FirebaseFirestore.instance;
 
 Future<List<ActivityInfo>> fetchAllProjectContents(String docId) async {
-  DocumentSnapshot documentSnapshot =
-      await db.collection('projects').doc(docId).get();
   List<ActivityInfo> projectsContentsList = [];
 
   try {
+    DocumentSnapshot documentSnapshot =
+        await db.collection('projects').doc(docId).get();
+
     if (documentSnapshot.exists) {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
+
       data.forEach((key, item) {
         var projectInfo = ActivityInfo.fromJson(docId, key, item);
         projectsContentsList.add(projectInfo);

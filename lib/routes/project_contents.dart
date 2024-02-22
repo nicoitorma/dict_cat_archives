@@ -21,6 +21,7 @@ class _ProjectContentsState extends State<ProjectContents> {
   bool selectAll = false;
   List<ActivityInfo> selected = [];
   bool isSearching = false;
+  late List<ActivityInfo> filteredList = [];
 
   @override
   void initState() {
@@ -44,7 +45,26 @@ class _ProjectContentsState extends State<ProjectContents> {
     female.dispose();
   }
 
-  List<Widget> buildActions(List<Widget> items) {
+  Widget buildSearchField() {
+    return TextField(
+      autofocus: true,
+      style: const TextStyle(color: Colors.white),
+      decoration: const InputDecoration(
+          hintText: 'Search items', hintStyle: TextStyle(color: Colors.white)),
+      onChanged: (query) {
+        setState(() {
+          isSearching = query.isNotEmpty;
+          if (!isSearching) filteredList.clear();
+          filteredList = provider.projectContents
+              .where((content) =>
+                  content.title.toLowerCase().contains(query.toLowerCase()))
+              .toList();
+        });
+      },
+    );
+  }
+
+  List<Widget> buildActions(Widget items) {
     if (isSearching) {
       return [
         IconButton(
@@ -52,6 +72,7 @@ class _ProjectContentsState extends State<ProjectContents> {
           onPressed: () {
             setState(() {
               isSearching = false;
+              filteredList.clear();
             });
           },
         ),
@@ -66,24 +87,9 @@ class _ProjectContentsState extends State<ProjectContents> {
             });
           },
         ),
-        ...items
+        items
       ];
     }
-  }
-
-  Widget buildSearchField() {
-    return TextField(
-      autofocus: true,
-      decoration: const InputDecoration(
-        hintText: 'Search items',
-      ),
-      onSubmitted: (query) {
-        // Handle search query
-        setState(() {
-          isSearching = false;
-        });
-      },
-    );
   }
 
   @override
@@ -93,32 +99,39 @@ class _ProjectContentsState extends State<ProjectContents> {
         appBar: CustomAppBar(
             title:
                 isSearching ? buildSearchField() : Text(widget.project.docId),
-            actions: buildActions([
-              IconButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                              title: const Text('Delete Item'),
-                              content: const Text(
-                                  'Are you sure to delete the selected items?'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: Text(labelCancel)),
-                                TextButton(
-                                    onPressed: () {
-                                      value.deleteActivity(selected,
-                                          value.projectContents.length);
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text(labelDelete)),
-                              ],
-                            ));
-                  },
-                  icon: const Icon(Icons.delete))
-            ])),
+            actions: buildActions(IconButton(
+                onPressed: () {
+                  selected.isEmpty
+                      ? showDialog(
+                          context: context,
+                          builder: (_) => const AlertDialog(
+                              content: Text('No Item selected.')))
+                      : showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text(labelDeleteActivityTitle),
+                            content: Text(labelDeleteActivity),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context, rootNavigator: true)
+                                        .pop(),
+                                child: Text(labelCancel),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  value.deleteActivity(
+                                      selected, value.projectContents.length);
+                                  Navigator.of(context, rootNavigator: true)
+                                      .pop();
+                                },
+                                child: Text(labelDelete),
+                              ),
+                            ],
+                          ),
+                        );
+                },
+                icon: const Icon(Icons.delete)))),
         body: Align(
           alignment: Alignment.topCenter,
           child: Padding(
@@ -162,7 +175,8 @@ class _ProjectContentsState extends State<ProjectContents> {
                       DataColumn(label: Text('Male Count', style: header)),
                       DataColumn(label: Text('Female Count', style: header)),
                     ],
-                    rows: value.projectContents.map(
+                    rows: (isSearching ? filteredList : value.projectContents)
+                        .map(
                       (content) {
                         return DataRow(
                           cells: [
@@ -178,7 +192,10 @@ class _ProjectContentsState extends State<ProjectContents> {
                                       selected.remove(content);
                                     }
                                     (selected.length ==
-                                            value.projectContents.length)
+                                            (isSearching
+                                                    ? filteredList
+                                                    : value.projectContents)
+                                                .length)
                                         ? selectAll = true
                                         : selectAll = false;
                                   });

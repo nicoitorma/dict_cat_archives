@@ -27,7 +27,6 @@ class ProjectContentsProvider extends ChangeNotifier {
       projectContents.remove(activity);
       await deleteActivityOnFirebase(activity, count, activityInfo.length);
     }
-
     notifyListeners();
   }
 

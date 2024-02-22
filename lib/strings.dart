@@ -25,5 +25,9 @@ String labelFemaleParticipants = 'Count of female participants';
 String labelClose = 'Close';
 String labelCancel = 'Cancel';
 String labelDelete = 'Delete';
+String labelExport = 'Export';
 String labelDeleteProject =
     'Deleting a project will remove all of its contents.';
+String labelDeleteActivity =
+    'Are you sure you want to delete the selected items?';
+String labelDeleteActivityTitle = 'Delete Item';

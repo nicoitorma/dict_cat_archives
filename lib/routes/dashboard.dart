@@ -5,6 +5,8 @@ import 'package:dict_cat_archives/layouts/bar_graph.dart';
 import 'package:dict_cat_archives/layouts/drawer.dart';
 import 'package:dict_cat_archives/layouts/project_card.dart';
 import 'package:dict_cat_archives/models/project.dart';
+import 'package:dict_cat_archives/providers/excel_export.dart';
+import 'package:dict_cat_archives/providers/project_content_provider.dart';
 import 'package:dict_cat_archives/providers/project_provider.dart';
 import 'package:dict_cat_archives/routes/project_contents.dart';
 import 'package:dict_cat_archives/strings.dart';
@@ -26,7 +28,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   FirebaseAuth auth = FirebaseAuth.instance;
   late ProjectListProvider provider;
-
   @override
   void initState() {
     super.initState();
@@ -39,8 +40,8 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: CustomAppBar(title: Text(appName)),
       drawer: CustomDrawer(email: '${auth.currentUser?.email}'),
-      body: Consumer<ProjectListProvider>(
-        builder: (context, value, child) {
+      body: Consumer2<ProjectListProvider, ProjectContentsProvider>(
+        builder: (context, value, activity, child) {
           return Column(
             children: [
               Expanded(
@@ -63,7 +64,7 @@ class _DashboardState extends State<Dashboard> {
                         } else if (constraints.maxWidth < 1100) {
                           crossAxisCount = 3;
                         } else {
-                          crossAxisCount = 7;
+                          crossAxisCount = 6;
                         }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -87,6 +88,11 @@ class _DashboardState extends State<Dashboard> {
                                         duration:
                                             const Duration(milliseconds: 400),
                                         childCurrent: widget)),
+                                exportOnTap: () async {
+                                  await activity.fetchActivity(proj.docId);
+                                  exportToExcel(
+                                      activity.projectContents, proj.docId);
+                                },
                                 deleteOnTap: () {
                                   showDialog(
                                       context: context,

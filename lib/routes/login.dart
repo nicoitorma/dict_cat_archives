@@ -38,23 +38,23 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<String?> _signupUser(SignupData data) async {
-    try {
-      await auth.createUserWithEmailAndPassword(
-        email: data.name!,
-        password: data.password!,
-      );
-      return null;
-    } on FirebaseAuthException catch (e) {
-      if (e.message!.contains('auth/email-already-in-use')) {
-        return 'Email already exist.';
-      } else if (e.message!.contains('auth/invalid-email')) {
-        return 'Invalid email.';
-      } else {
-        return 'Unknown error. Try again later.';
-      }
-    }
-  }
+  // Future<String?> _signupUser(SignupData data) async {
+  //   try {
+  //     await auth.createUserWithEmailAndPassword(
+  //       email: data.name!,
+  //       password: data.password!,
+  //     );
+  //     return null;
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.message!.contains('auth/email-already-in-use')) {
+  //       return 'Email already exist.';
+  //     } else if (e.message!.contains('auth/invalid-email')) {
+  //       return 'Invalid email.';
+  //     } else {
+  //       return 'Unknown error. Try again later.';
+  //     }
+  //   }
+  // }
 
   Future<String?> _recoverPassword(String name) async {
     try {
@@ -79,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
       title: 'DICT Archives',
       logo: const AssetImage('assets/images/DICT-logo.png'),
       onLogin: _authUser,
-      onSignup: _signupUser,
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const Dashboard(),

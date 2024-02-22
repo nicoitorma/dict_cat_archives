@@ -1,5 +1,5 @@
-import 'package:dict_cat_archives/authentication/login.dart';
 import 'package:dict_cat_archives/routes/about_screen.dart';
+import 'package:dict_cat_archives/routes/login.dart';
 import 'package:dict_cat_archives/routes/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
