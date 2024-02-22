@@ -50,36 +50,38 @@ class _ProjectContentsState extends State<ProjectContents> {
         appBar: CustomAppBar(
           title: widget.project.docId,
           actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: InkWell(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                              title: const Text('Delete Item'),
-                              content: const Text(
-                                  'Are you sure to delete the selected items?'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: Text(labelCancel)),
-                                TextButton(
-                                    onPressed: () {
-                                      value.deleteActivity(selected,
-                                          value.projectContents.length);
-                                      Navigator.of(context).pop();
-                                      setState(() {
-                                        selectAll = false;
-                                      });
-                                    },
-                                    child: Text(labelDelete)),
-                              ],
-                            ));
-                  },
-                  child: const Icon(Icons.delete)),
-            ),
+            selected.isNotEmpty
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: InkWell(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                    title: const Text('Delete Item'),
+                                    content: const Text(
+                                        'Are you sure to delete the selected items?'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: Text(labelCancel)),
+                                      TextButton(
+                                          onPressed: () {
+                                            value.deleteActivity(selected,
+                                                value.projectContents.length);
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              selectAll = false;
+                                            });
+                                          },
+                                          child: Text(labelDelete)),
+                                    ],
+                                  ));
+                        },
+                        child: const Icon(Icons.delete)),
+                  )
+                : Container(),
           ],
         ),
         body: Align(
@@ -285,7 +287,7 @@ class _ProjectContentsState extends State<ProjectContents> {
                           child: TextField(
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          labelText: labelFemaleParticipants,
+                          labelText: labelMaleParticipants,
                         ),
                         controller: male,
                         onChanged: (value) {
