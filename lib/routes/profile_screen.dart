@@ -24,30 +24,34 @@ class _CustomProfileScreenState extends State<CustomProfileScreen> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Padding(
-              padding: const EdgeInsets.only(top: 10.0),
+              padding: const EdgeInsets.only(top: 30.0),
               child: Center(
                   child: Text('${auth.currentUser?.email}',
                       style: const TextStyle(fontSize: 20))),
             ),
             const Padding(
-              padding: EdgeInsets.only(top: 10.0),
+              padding: EdgeInsets.only(top: 30.0),
               child: Center(child: EditableUserDisplayName()),
             ),
+            const Padding(
+                padding: EdgeInsets.only(top: 30),
+                child:
+                    Text('You can recover your password in the Login page.')),
             Padding(
-              padding: const EdgeInsets.only(top: 10.0),
+              padding: const EdgeInsets.only(top: 30.0),
               child: SizedBox(
                 height: 50,
                 width: 200,
                 child: ElevatedButton(
                     onPressed: () {
                       auth.signOut();
-                      Navigator.pushReplacementNamed(context, '/start');
+                      Navigator.pushReplacementNamed(context, '/login');
                     },
                     child: Text(labelSignOut)),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 10.0),
+              padding: const EdgeInsets.only(top: 30.0),
               child: SizedBox(
                 height: 40,
                 width: 200,
@@ -58,17 +62,16 @@ class _CustomProfileScreenState extends State<CustomProfileScreen> {
                       showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
-                                title: Text(labelDeleteAccount),
-                                content: const Text('Delete Account'),
+                                content: Text(labelDeleteAccount),
                                 actions: [
                                   TextButton(
                                       onPressed: () => Navigator.pop(context),
-                                      child: const Text('Cancel')),
+                                      child: Text(labelCancel)),
                                   TextButton(
                                       onPressed: () {
                                         auth.currentUser?.delete();
                                         Navigator.pushReplacementNamed(
-                                            context, '/start');
+                                            context, '/login');
                                       },
                                       child: Text(labelContinue))
                                 ],

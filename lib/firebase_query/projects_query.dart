@@ -34,6 +34,8 @@ addNewProject(Project project) async {
         .collection(labelAboutsCollection)
         .doc(project.docId)
         .set({'background': imageUrl, 'count': 0});
+
+    await db.collection(labelProjectCollection).doc(project.docId).set({});
   } catch (err) {
     debugPrint(err.toString());
   }

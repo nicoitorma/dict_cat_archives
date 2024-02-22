@@ -56,14 +56,13 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<String> _recoverPassword(String name) {
-    debugPrint('Name: $name');
-    return Future.delayed(loginTime).then((_) {
-      if (name.isNotEmpty) {
-        return 'User not exists';
-      }
-      return 'HEHE';
-    });
+  Future<String?> _recoverPassword(String name) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: name);
+      return null;
+    } catch (error) {
+      return 'Error sending password reset email: $error';
+    }
   }
 
   @override
@@ -87,6 +86,11 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
       },
       onRecoverPassword: _recoverPassword,
+      messages: LoginMessages(
+        recoverPasswordDescription:
+            'Recovery procedure will be sent to the email.',
+        recoverPasswordSuccess: 'Email sent successfully.',
+      ),
     );
   }
 }

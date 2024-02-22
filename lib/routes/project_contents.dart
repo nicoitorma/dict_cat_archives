@@ -25,7 +25,7 @@ class _ProjectContentsState extends State<ProjectContents> {
   void initState() {
     super.initState();
     provider = Provider.of<ProjectContentsProvider>(context, listen: false);
-    provider.fetchProjectContents(widget.project.docId);
+    provider.fetchActivity(widget.project.docId);
   }
 
   @override
@@ -70,6 +70,9 @@ class _ProjectContentsState extends State<ProjectContents> {
                                       value.deleteActivity(selected,
                                           value.projectContents.length);
                                       Navigator.of(context).pop();
+                                      setState(() {
+                                        selectAll = false;
+                                      });
                                     },
                                     child: Text(labelDelete)),
                               ],
@@ -137,6 +140,10 @@ class _ProjectContentsState extends State<ProjectContents> {
                                     } else {
                                       selected.remove(content);
                                     }
+                                    (selected.length ==
+                                            value.projectContents.length)
+                                        ? selectAll = true
+                                        : selectAll = false;
                                   });
                                 },
                               ),
@@ -411,7 +418,7 @@ class _ProjectContentsState extends State<ProjectContents> {
         maleCount: int.tryParse(male.text),
         femaleCount: int.tryParse(female.text));
 
-    provider.addProjectContent(projectInfo, widget.project.count!);
+    provider.addActivity(projectInfo, widget.project.count!);
     clearTextFields();
     Navigator.of(context).pop();
   }

@@ -44,8 +44,11 @@ class _DashboardState extends State<Dashboard> {
           return Column(
             children: [
               Expanded(
-                  child: Padding(
+                  child: Container(
                 padding: const EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Card(
                     elevation: 3,
                     child: ActivityChart(project: value.projects)),
@@ -88,10 +91,9 @@ class _DashboardState extends State<Dashboard> {
                                   showDialog(
                                       context: context,
                                       builder: (_) => AlertDialog(
-                                            title: Text(
-                                                'Are you sure to delete ${proj.docId}?'),
-                                            content: const Text(
-                                                'Deleting a project will remove all of its contents'),
+                                            title:
+                                                Text('Delete ${proj.docId}?'),
+                                            content: Text(labelDeleteProject),
                                             actions: [
                                               TextButton(
                                                   onPressed: () =>

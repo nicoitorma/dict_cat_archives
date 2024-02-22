@@ -1,5 +1,6 @@
 String appName = 'DICT Catanduanes Archives';
 String labelProfile = 'Profile';
+String labelAbout = 'About';
 String labelSave = 'Save';
 String labelSignOut = 'Sign out';
 String labelDeleteAccount = 'Delete Account';
@@ -24,3 +25,5 @@ String labelFemaleParticipants = 'Count of female participants';
 String labelClose = 'Close';
 String labelCancel = 'Cancel';
 String labelDelete = 'Delete';
+String labelDeleteProject =
+    'Deleting a project will remove all of its contents.';

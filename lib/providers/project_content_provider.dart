@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ProjectContentsProvider extends ChangeNotifier {
   List<ActivityInfo> projectContents = [];
 
-  fetchProjectContents(String docId) async {
+  fetchActivity(String docId) async {
     List projectContentsList = await fetchAllProjectContents(docId);
     projectContents.clear();
 
@@ -16,7 +16,7 @@ class ProjectContentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addProjectContent(ActivityInfo projectInfo, int count) async {
+  void addActivity(ActivityInfo projectInfo, int count) async {
     await addProjectToFirebase(projectInfo, count);
     projectContents.add(projectInfo);
     notifyListeners();
@@ -33,6 +33,6 @@ class ProjectContentsProvider extends ChangeNotifier {
 
   void uploadPhoto(ActivityInfo activity, var photo) async {
     await addPhotoInActivity(activity, photo);
-    fetchProjectContents(activity.docId);
+    fetchActivity(activity.docId);
   }
 }

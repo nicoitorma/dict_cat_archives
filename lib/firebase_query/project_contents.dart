@@ -67,13 +67,12 @@ addPhotoInActivity(ActivityInfo activityInfo, var photo) async {
 }
 
 deleteActivityOnFirebase(
-    ActivityInfo activityInfo, int count, int length) async {
+    ActivityInfo activityInfo, int count, int deductionCount) async {
   try {
     DocumentReference documentReference = FirebaseFirestore.instance
         .collection(labelProjectCollection)
         .doc(activityInfo.docId);
 
-    // Update document with field mask to remove the specified field
     await documentReference.update({
       activityInfo.title: FieldValue.delete(),
     });
@@ -81,7 +80,7 @@ deleteActivityOnFirebase(
     await db
         .collection(labelAboutsCollection)
         .doc(activityInfo.docId)
-        .update({'count': count - length});
+        .update({'count': count - deductionCount});
   } catch (e) {
     debugPrint(e.toString());
   }

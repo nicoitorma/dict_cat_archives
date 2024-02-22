@@ -18,7 +18,7 @@ class ActivityCountChart extends StatelessWidget {
     return BarChart(
       BarChartData(
         barTouchData: barTouchData,
-        titlesData: titlesData(),
+        titlesData: titlesData(context),
         barGroups: getBarGroups(),
         gridData: const FlGridData(show: false),
         alignment: BarChartAlignment.spaceAround,
@@ -50,9 +50,9 @@ class ActivityCountChart extends StatelessWidget {
         ),
       );
 
-  FlTitlesData titlesData() {
+  FlTitlesData titlesData(BuildContext context) {
     return FlTitlesData(
-      show: true,
+      show: MediaQuery.of(context).size.width > 1100,
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,

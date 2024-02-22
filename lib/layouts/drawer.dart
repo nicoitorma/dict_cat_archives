@@ -1,4 +1,5 @@
 import 'package:dict_cat_archives/authentication/login.dart';
+import 'package:dict_cat_archives/routes/about_screen.dart';
 import 'package:dict_cat_archives/routes/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +32,11 @@ class CustomDrawer extends StatelessWidget {
             title: const Text('Profile'),
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => const CustomProfileScreen()))),
-        const ListTile(
-          leading: Icon(Icons.info),
-          title: Text('About'),
-        ),
+        ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('About'),
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const AboutScreen()))),
         ListTile(
           leading: const Icon(Icons.logout),
           title: const Text('Log out'),
