@@ -22,6 +22,9 @@ class _ProjectContentsState extends State<ProjectContents> {
   List<ActivityInfo> selected = [];
   bool isSearching = false;
   late List<ActivityInfo> filteredList = [];
+  int? sortColumnIndex;
+  bool isAscending = false;
+  late List<ActivityInfo> activities;
 
   @override
   void initState() {
@@ -95,6 +98,7 @@ class _ProjectContentsState extends State<ProjectContents> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ProjectContentsProvider>(builder: (context, value, child) {
+      activities = value.projectContents;
       return Scaffold(
         appBar: CustomAppBar(
             title:
@@ -141,6 +145,8 @@ class _ProjectContentsState extends State<ProjectContents> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
+                    sortAscending: isAscending,
+                    sortColumnIndex: sortColumnIndex,
                     horizontalMargin: 10,
                     columns: [
                       DataColumn(
@@ -160,23 +166,34 @@ class _ProjectContentsState extends State<ProjectContents> {
                           },
                         ),
                       ),
-                      DataColumn(label: Text(labelTitle, style: header)),
                       DataColumn(
+                          onSort: onSort,
+                          label: Text(labelTitle, style: header)),
+                      DataColumn(
+                          onSort: onSort,
                           label: Text(labelDateConducted, style: header)),
                       DataColumn(
+                          onSort: onSort,
                           label: Text(labelDateAccomplished, style: header)),
-                      DataColumn(label: Text(labelTime, style: header)),
-                      DataColumn(label: Text(labelMunicipality, style: header)),
-                      DataColumn(label: Text(labelSector, style: header)),
-                      DataColumn(label: Text(labelMode, style: header)),
+                      DataColumn(
+                          onSort: onSort,
+                          label: Text(labelTime, style: header)),
+                      DataColumn(
+                          onSort: onSort,
+                          label: Text(labelMunicipality, style: header)),
+                      DataColumn(
+                          onSort: onSort,
+                          label: Text(labelSector, style: header)),
+                      DataColumn(
+                          onSort: onSort,
+                          label: Text(labelMode, style: header)),
                       DataColumn(label: Text(labelConductedBy, style: header)),
                       DataColumn(
                           label: Text(labelResourcePerson, style: header)),
                       DataColumn(label: Text('Male Count', style: header)),
                       DataColumn(label: Text('Female Count', style: header)),
                     ],
-                    rows: (isSearching ? filteredList : value.projectContents)
-                        .map(
+                    rows: (isSearching ? filteredList : activities).map(
                       (content) {
                         return DataRow(
                           cells: [
@@ -240,6 +257,21 @@ class _ProjectContentsState extends State<ProjectContents> {
       );
     });
   }
+
+  void onSort(int columnIndex, bool ascending) {
+    if (columnIndex == 1) {
+      activities.sort((activity1, activity2) =>
+          compareString(ascending, activity1.title, activity2.title));
+    }
+
+    setState(() {
+      sortColumnIndex = columnIndex;
+      isAscending = ascending;
+    });
+  }
+
+  int compareString(bool ascending, String value1, String value2) =>
+      ascending ? value1.compareTo(value2) : value2.compareTo(value1);
 
   String? _selectedMode;
   TextEditingController title = TextEditingController();
