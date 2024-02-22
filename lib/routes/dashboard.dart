@@ -37,7 +37,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: appName),
+      appBar: CustomAppBar(title: Text(appName)),
       drawer: CustomDrawer(email: '${auth.currentUser?.email}'),
       body: Consumer<ProjectListProvider>(
         builder: (context, value, child) {

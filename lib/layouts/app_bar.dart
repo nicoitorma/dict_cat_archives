@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key, required this.title, this.actions});
-  final String title;
+  final Widget title;
   final double barHeight = 50.0;
   final List<Widget>? actions;
 
@@ -10,10 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       actions: actions ?? [],
-      title: Text(title,
-          style: const TextStyle(
-              color: Colors.white,
-              shadows: [Shadow(offset: Offset(1.0, 1.0), color: Colors.grey)])),
+      title: title,
       flexibleSpace: Container(
         decoration: const BoxDecoration(
             gradient: LinearGradient(colors: [

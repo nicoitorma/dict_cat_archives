@@ -20,6 +20,7 @@ class _ProjectContentsState extends State<ProjectContents> {
   late ProjectContentsProvider provider;
   bool selectAll = false;
   List<ActivityInfo> selected = [];
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -43,47 +44,81 @@ class _ProjectContentsState extends State<ProjectContents> {
     female.dispose();
   }
 
+  List<Widget> buildActions(List<Widget> items) {
+    if (isSearching) {
+      return [
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            setState(() {
+              isSearching = false;
+            });
+          },
+        ),
+      ];
+    } else {
+      return [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            setState(() {
+              isSearching = true;
+            });
+          },
+        ),
+        ...items
+      ];
+    }
+  }
+
+  Widget buildSearchField() {
+    return TextField(
+      autofocus: true,
+      decoration: const InputDecoration(
+        hintText: 'Search items',
+      ),
+      onSubmitted: (query) {
+        // Handle search query
+        setState(() {
+          isSearching = false;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ProjectContentsProvider>(builder: (context, value, child) {
       return Scaffold(
         appBar: CustomAppBar(
-          title: widget.project.docId,
-          actions: [
-            selected.isNotEmpty
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: InkWell(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                    title: const Text('Delete Item'),
-                                    content: const Text(
-                                        'Are you sure to delete the selected items?'),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: Text(labelCancel)),
-                                      TextButton(
-                                          onPressed: () {
-                                            value.deleteActivity(selected,
-                                                value.projectContents.length);
-                                            Navigator.of(context).pop();
-                                            setState(() {
-                                              selectAll = false;
-                                            });
-                                          },
-                                          child: Text(labelDelete)),
-                                    ],
-                                  ));
-                        },
-                        child: const Icon(Icons.delete)),
-                  )
-                : Container(),
-          ],
-        ),
+            title:
+                isSearching ? buildSearchField() : Text(widget.project.docId),
+            actions: buildActions([
+              IconButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: const Text('Delete Item'),
+                              content: const Text(
+                                  'Are you sure to delete the selected items?'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: Text(labelCancel)),
+                                TextButton(
+                                    onPressed: () {
+                                      value.deleteActivity(selected,
+                                          value.projectContents.length);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text(labelDelete)),
+                              ],
+                            ));
+                  },
+                  icon: const Icon(Icons.delete))
+            ])),
         body: Align(
           alignment: Alignment.topCenter,
           child: Padding(

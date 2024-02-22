@@ -1,4 +1,5 @@
 import 'package:dict_cat_archives/layouts/app_bar.dart';
+import 'package:dict_cat_archives/strings.dart';
 import 'package:flutter/material.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width < 600;
     return Scaffold(
-      appBar: const CustomAppBar(title: 'About'),
+      appBar: CustomAppBar(title: Text(labelAbout)),
       body: Column(
         children: [
           isMobile

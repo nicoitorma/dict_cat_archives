@@ -21,16 +21,7 @@ class _ActivityDetailsState extends State<ActivityDetails> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: CustomAppBar(title: widget.activityInfo.title, actions: const [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: Icon(Icons.save),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: Icon(Icons.delete),
-        )
-      ]),
+      appBar: CustomAppBar(title: Text(widget.activityInfo.title)),
       body: Consumer<ProjectContentsProvider>(
         builder: (context, value, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
