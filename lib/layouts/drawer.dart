@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key, required this.email});
-  final String email;
+  const CustomDrawer({super.key, required this.user});
+  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,10 @@ class CustomDrawer extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     foregroundImage: AssetImage('assets/images/DICT-logo.png'),
                   ),
-                  Text(email),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(user.email ?? ''),
+                  ),
                 ],
               )),
         ),

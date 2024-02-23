@@ -39,11 +39,13 @@ addProjectToFirebase(ActivityInfo projectInfo, int count) async {
         'time': projectInfo.time,
         'municipality': projectInfo.municipality,
         'sector': projectInfo.sector,
-        'mode': projectInfo.mode,
+        'mode': projectInfo.mode ?? '',
         'resourcePerson': projectInfo.resourcePerson,
         'conductedBy': projectInfo.conductedBy,
-        'maleCount': projectInfo.maleCount,
-        'femaleCount': projectInfo.femaleCount
+        'maleCount': projectInfo.maleCount ?? 0,
+        'femaleCount': projectInfo.femaleCount ?? 0,
+        'remarks': projectInfo.remarks,
+        'link': projectInfo.link
       }
     });
     await db

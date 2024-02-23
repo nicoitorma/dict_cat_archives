@@ -13,6 +13,8 @@ class ActivityInfo {
   int? femaleCount;
   List<String>? images;
   bool isChecked = false;
+  String? remarks;
+  String? link;
 
   ActivityInfo(
       {required this.docId,
@@ -27,6 +29,8 @@ class ActivityInfo {
       this.resourcePerson,
       this.maleCount,
       this.femaleCount,
+      this.remarks,
+      this.link,
       this.images});
 
   ActivityInfo.fromJson(String doc, String key, Map<String, dynamic> item)
@@ -42,5 +46,7 @@ class ActivityInfo {
         resourcePerson = item['resourcePerson'] ?? '',
         maleCount = item['maleCount'] ?? 0,
         femaleCount = item['femaleCount'] ?? 0,
+        remarks = item['remarks'],
+        link = item['link'],
         images = item['images'];
 }

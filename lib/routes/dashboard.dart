@@ -39,7 +39,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: Text(appName)),
-      drawer: CustomDrawer(email: '${auth.currentUser?.email}'),
+      drawer: CustomDrawer(user: auth.currentUser!),
       body: Consumer2<ProjectListProvider, ProjectContentsProvider>(
         builder: (context, value, activity, child) {
           return Column(
@@ -102,14 +102,17 @@ class _DashboardState extends State<Dashboard> {
                                             content: Text(labelDeleteProject),
                                             actions: [
                                               TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
+                                                  onPressed: () => Navigator.of(
+                                                          context,
+                                                          rootNavigator: true)
+                                                      .pop(),
                                                   child: Text(labelCancel)),
                                               TextButton(
                                                   onPressed: () {
                                                     value.deleteProject(proj);
-                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context,
+                                                            rootNavigator: true)
+                                                        .pop();
                                                   },
                                                   child: Text(labelDelete)),
                                             ],

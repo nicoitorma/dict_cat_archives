@@ -5,6 +5,7 @@ import 'package:dict_cat_archives/providers/project_content_provider.dart';
 import 'package:dict_cat_archives/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as html;
 
 class ProjectContents extends StatefulWidget {
   const ProjectContents({super.key, required this.project});
@@ -15,7 +16,7 @@ class ProjectContents extends StatefulWidget {
 }
 
 class _ProjectContentsState extends State<ProjectContents> {
-  TextStyle header = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  TextStyle header = const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
   TextStyle rowData = const TextStyle(fontSize: 16);
   late ProjectContentsProvider provider;
   bool selectAll = false;
@@ -46,6 +47,8 @@ class _ProjectContentsState extends State<ProjectContents> {
     conducted.dispose();
     male.dispose();
     female.dispose();
+    remarksText.dispose();
+    linkText.dispose();
   }
 
   Widget buildSearchField() {
@@ -108,8 +111,8 @@ class _ProjectContentsState extends State<ProjectContents> {
                   selected.isEmpty
                       ? showDialog(
                           context: context,
-                          builder: (_) => const AlertDialog(
-                              content: Text('No Item selected.')))
+                          builder: (_) =>
+                              AlertDialog(content: Text(labelNoSelected)))
                       : showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
@@ -123,11 +126,18 @@ class _ProjectContentsState extends State<ProjectContents> {
                                 child: Text(labelCancel),
                               ),
                               TextButton(
-                                onPressed: () {
-                                  value.deleteActivity(
-                                      selected, value.projectContents.length);
-                                  Navigator.of(context, rootNavigator: true)
-                                      .pop();
+                                onPressed: () async {
+                                  final currentContext = context;
+
+                                  value
+                                      .deleteActivity(selected,
+                                          value.projectContents.length)
+                                      .then((_) {
+                                    Navigator.of(currentContext,
+                                            rootNavigator: true)
+                                        .pop();
+                                    selected.clear();
+                                  });
                                 },
                                 child: Text(labelDelete),
                               ),
@@ -190,8 +200,10 @@ class _ProjectContentsState extends State<ProjectContents> {
                       DataColumn(label: Text(labelConductedBy, style: header)),
                       DataColumn(
                           label: Text(labelResourcePerson, style: header)),
-                      DataColumn(label: Text('Male Count', style: header)),
-                      DataColumn(label: Text('Female Count', style: header)),
+                      DataColumn(label: Text(labelMaleCount, style: header)),
+                      DataColumn(label: Text(labelFemaleCount, style: header)),
+                      DataColumn(label: Text(labelRemarks, style: header)),
+                      DataColumn(label: Text(labelLink, style: header))
                     ],
                     rows: (isSearching ? filteredList : activities).map(
                       (content) {
@@ -241,6 +253,24 @@ class _ProjectContentsState extends State<ProjectContents> {
                                 style: rowData)),
                             DataCell(Text(content.femaleCount.toString(),
                                 style: rowData)),
+                            DataCell(
+                                Text(content.remarks ?? '', style: rowData)),
+                            DataCell(
+                              GestureDetector(
+                                onTap: () {
+                                  final url = content.link.toString();
+                                  if (url.isNotEmpty) {
+                                    html.window.open(url, '_blank');
+                                  }
+                                },
+                                child: Text(
+                                  _truncateUrl(content.link ?? ''),
+                                  style: const TextStyle(
+                                      color: Colors.blue, fontSize: 16),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
                           ],
                         );
                       },
@@ -258,10 +288,45 @@ class _ProjectContentsState extends State<ProjectContents> {
     });
   }
 
+  String _truncateUrl(String url) {
+    const maxLength = 20;
+    if (url.length <= maxLength) {
+      return url;
+    } else {
+      return '${url.substring(0, maxLength - 3)}...';
+    }
+  }
+
   void onSort(int columnIndex, bool ascending) {
-    if (columnIndex == 1) {
-      activities.sort((activity1, activity2) =>
-          compareString(ascending, activity1.title, activity2.title));
+    switch (columnIndex) {
+      case 1:
+        activities.sort((activity1, activity2) =>
+            compareString(ascending, activity1.title, activity2.title));
+        break;
+      case 2:
+        activities.sort((activity1, activity2) => compareString(
+            ascending, activity1.dateConducted!, activity2.dateConducted!));
+        break;
+      case 3:
+        activities.sort((activity1, activity2) => compareString(ascending,
+            activity1.dateAccomplished!, activity2.dateAccomplished!));
+        break;
+      case 4:
+        activities.sort((activity1, activity2) =>
+            compareString(ascending, activity1.time!, activity2.time!));
+        break;
+      case 5:
+        activities.sort((activity1, activity2) => compareString(
+            ascending, activity1.municipality!, activity2.municipality!));
+        break;
+      case 6:
+        activities.sort((activity1, activity2) =>
+            compareString(ascending, activity1.sector!, activity2.sector!));
+        break;
+      case 7:
+        activities.sort((activity1, activity2) =>
+            compareString(ascending, activity1.mode!, activity2.mode!));
+        break;
     }
 
     setState(() {
@@ -284,6 +349,8 @@ class _ProjectContentsState extends State<ProjectContents> {
   TextEditingController resource = TextEditingController();
   TextEditingController male = TextEditingController();
   TextEditingController female = TextEditingController();
+  TextEditingController remarksText = TextEditingController();
+  TextEditingController linkText = TextEditingController();
 
   void _addActivity(BuildContext context) {
     showDialog(
@@ -408,6 +475,23 @@ class _ProjectContentsState extends State<ProjectContents> {
                       )),
                     ],
                   ),
+                  Row(
+                    children: <Widget>[
+                      Flexible(
+                        child: TextField(
+                            keyboardType: TextInputType.url,
+                            decoration:
+                                InputDecoration(labelText: labelRemarks),
+                            controller: remarksText),
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: TextField(
+                            decoration: InputDecoration(labelText: labelLink),
+                            controller: linkText),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -501,6 +585,8 @@ class _ProjectContentsState extends State<ProjectContents> {
         mode: _selectedMode,
         resourcePerson: resource.text,
         conductedBy: conducted.text,
+        remarks: remarksText.text,
+        link: linkText.text,
         maleCount: int.tryParse(male.text),
         femaleCount: int.tryParse(female.text));
 
@@ -520,5 +606,7 @@ class _ProjectContentsState extends State<ProjectContents> {
     conducted.clear();
     male.clear();
     female.clear();
+    linkText.clear();
+    remarksText.clear();
   }
 }

@@ -29,5 +29,10 @@ String labelExport = 'Export';
 String labelDeleteProject =
     'Deleting a project will remove all of its contents.';
 String labelDeleteActivity =
-    'Are you sure you want to delete the selected items?';
+    'Are you sure you want to delete the selected activities?';
+String labelNoSelected = 'No activity selected.';
 String labelDeleteActivityTitle = 'Delete Item';
+String labelRemarks = 'Remarks';
+String labelLink = 'External link';
+String labelMaleCount = 'Male count';
+String labelFemaleCount = 'Female count';
