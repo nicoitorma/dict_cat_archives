@@ -47,9 +47,12 @@ deleteProjectOnFirebase(Project project) async {
         db.collection(labelProjectCollection).doc(project.docId);
     DocumentReference aboutRef =
         db.collection(labelAboutsCollection).doc(project.docId);
+    Reference storageRef =
+        FirebaseStorage.instance.ref().child('about/${project.docId}.png');
 
     await projectRef.delete();
     await aboutRef.delete();
+    await storageRef.delete();
   } catch (e) {
     debugPrint(e.toString());
   }

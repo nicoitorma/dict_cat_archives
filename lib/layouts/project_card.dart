@@ -17,6 +17,7 @@ class ProjectCard extends BaseCard {
       onTap: onTap,
       borderRadius: BorderRadius.circular(25),
       child: Card(
+        elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: const EdgeInsets.all(8),
         child: LayoutBuilder(
@@ -24,7 +25,7 @@ class ProjectCard extends BaseCard {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: const Color.fromARGB(180, 223, 223, 223),
+                color: const Color.fromARGB(193, 209, 209, 209),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -103,7 +104,8 @@ class ProjectCard extends BaseCard {
                   ),
                   const SizedBox(height: 10.0),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 5),
                     child: Text(
                       project.docId,
                       overflow: TextOverflow.ellipsis,

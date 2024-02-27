@@ -42,92 +42,97 @@ class _DashboardState extends State<Dashboard> {
       drawer: CustomDrawer(user: auth.currentUser!),
       body: Consumer2<ProjectListProvider, ProjectContentsProvider>(
         builder: (context, value, activity, child) {
-          return Column(
-            children: [
-              Expanded(
-                  child: Container(
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Card(
-                    elevation: 3,
-                    child: ActivityChart(project: value.projects)),
-              )),
-              Expanded(
-                flex: 2,
-                child: (value.projects.length > 1)
-                    ? LayoutBuilder(builder: (context, constraints) {
-                        int crossAxisCount;
-                        if (constraints.maxWidth < 600) {
-                          crossAxisCount = 2;
-                        } else if (constraints.maxWidth < 1100) {
-                          crossAxisCount = 3;
-                        } else {
-                          crossAxisCount = 6;
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: crossAxisCount,
-                              crossAxisSpacing: 5.0,
-                              mainAxisSpacing: 5.0,
+          return Container(
+            color: const Color.fromARGB(26, 0, 83, 184),
+            child: Column(
+              children: [
+                Expanded(
+                    child: Container(
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Card(
+                      elevation: 3,
+                      child: ActivityChart(project: value.projects)),
+                )),
+                Expanded(
+                  flex: 2,
+                  child: (value.projects.length > 1)
+                      ? LayoutBuilder(builder: (context, constraints) {
+                          int crossAxisCount;
+                          if (constraints.maxWidth < 600) {
+                            crossAxisCount = 2;
+                          } else if (constraints.maxWidth < 1100) {
+                            crossAxisCount = 3;
+                          } else {
+                            crossAxisCount = 6;
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 5.0,
+                                mainAxisSpacing: 5.0,
+                              ),
+                              itemCount: value.projects.length,
+                              itemBuilder: (context, index) {
+                                Project proj = value.projects[index];
+                                return ProjectCard(
+                                  project: proj,
+                                  onTap: () => Navigator.of(context).push(
+                                      PageTransition(
+                                          type: PageTransitionType
+                                              .rightToLeftJoined,
+                                          child: ProjectContents(project: proj),
+                                          duration:
+                                              const Duration(milliseconds: 400),
+                                          childCurrent: widget)),
+                                  exportOnTap: () async {
+                                    await activity.fetchActivity(proj.docId);
+                                    exportToExcel(
+                                        activity.projectContents, proj.docId);
+                                  },
+                                  deleteOnTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                              title:
+                                                  Text('Delete ${proj.docId}?'),
+                                              content: Text(labelDeleteProject),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop(),
+                                                    child: Text(labelCancel)),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      value.deleteProject(proj);
+                                                      Navigator.of(context,
+                                                              rootNavigator:
+                                                                  true)
+                                                          .pop();
+                                                    },
+                                                    child: Text(labelDelete)),
+                                              ],
+                                            ));
+                                  },
+                                );
+                              },
                             ),
-                            itemCount: value.projects.length,
-                            itemBuilder: (context, index) {
-                              Project proj = value.projects[index];
-                              return ProjectCard(
-                                project: proj,
-                                onTap: () => Navigator.of(context).push(
-                                    PageTransition(
-                                        type: PageTransitionType
-                                            .rightToLeftJoined,
-                                        child: ProjectContents(project: proj),
-                                        duration:
-                                            const Duration(milliseconds: 400),
-                                        childCurrent: widget)),
-                                exportOnTap: () async {
-                                  await activity.fetchActivity(proj.docId);
-                                  exportToExcel(
-                                      activity.projectContents, proj.docId);
-                                },
-                                deleteOnTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => AlertDialog(
-                                            title:
-                                                Text('Delete ${proj.docId}?'),
-                                            content: Text(labelDeleteProject),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () => Navigator.of(
-                                                          context,
-                                                          rootNavigator: true)
-                                                      .pop(),
-                                                  child: Text(labelCancel)),
-                                              TextButton(
-                                                  onPressed: () {
-                                                    value.deleteProject(proj);
-                                                    Navigator.of(context,
-                                                            rootNavigator: true)
-                                                        .pop();
-                                                  },
-                                                  child: Text(labelDelete)),
-                                            ],
-                                          ));
-                                },
-                              );
-                            },
-                          ),
-                        );
-                      })
-                    : const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-              ),
-            ],
+                          );
+                        })
+                      : const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                ),
+              ],
+            ),
           );
         },
       ),

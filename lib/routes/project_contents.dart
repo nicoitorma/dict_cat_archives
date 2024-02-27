@@ -56,7 +56,8 @@ class _ProjectContentsState extends State<ProjectContents> {
       autofocus: true,
       style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
-          hintText: 'Search items', hintStyle: TextStyle(color: Colors.white)),
+          hintText: 'Search activity',
+          hintStyle: TextStyle(color: Colors.white)),
       onChanged: (query) {
         setState(() {
           isSearching = query.isNotEmpty;
@@ -146,147 +147,131 @@ class _ProjectContentsState extends State<ProjectContents> {
                         );
                 },
                 icon: const Icon(Icons.delete)))),
-        body: Align(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              elevation: 3,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                    sortAscending: isAscending,
-                    sortColumnIndex: sortColumnIndex,
-                    horizontalMargin: 10,
-                    columns: [
-                      DataColumn(
-                        label: Checkbox(
-                          value: selectAll,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectAll = newValue!;
-                              selected.clear();
-                              for (var content in value.projectContents) {
-                                content.isChecked = selectAll;
-                                if (content.isChecked) {
-                                  selected.add(content);
-                                }
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                      DataColumn(
-                          onSort: onSort,
-                          label: Text(labelTitle, style: header)),
-                      DataColumn(
-                          onSort: onSort,
-                          label: Text(labelDateConducted, style: header)),
-                      DataColumn(
-                          onSort: onSort,
-                          label: Text(labelDateAccomplished, style: header)),
-                      DataColumn(
-                          onSort: onSort,
-                          label: Text(labelTime, style: header)),
-                      DataColumn(
-                          onSort: onSort,
-                          label: Text(labelMunicipality, style: header)),
-                      DataColumn(
-                          onSort: onSort,
-                          label: Text(labelSector, style: header)),
-                      DataColumn(
-                          onSort: onSort,
-                          label: Text(labelMode, style: header)),
-                      DataColumn(label: Text(labelConductedBy, style: header)),
-                      DataColumn(
-                          label: Text(labelResourcePerson, style: header)),
-                      DataColumn(label: Text(labelMaleCount, style: header)),
-                      DataColumn(label: Text(labelFemaleCount, style: header)),
-                      DataColumn(label: Text(labelRemarks, style: header)),
-                      DataColumn(label: Text(labelLink, style: header))
-                    ],
-                    rows: (isSearching ? filteredList : activities).map(
-                      (content) {
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Checkbox(
-                                value: content.isChecked,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    content.isChecked = newValue!;
-                                    if (newValue == true) {
-                                      selected.add(content);
-                                    } else {
-                                      selected.remove(content);
-                                    }
-                                    (selected.length ==
-                                            (isSearching
-                                                    ? filteredList
-                                                    : value.projectContents)
-                                                .length)
-                                        ? selectAll = true
-                                        : selectAll = false;
-                                  });
-                                },
-                              ),
-                            ),
-                            DataCell(Text(content.title,
-                                style: const TextStyle(fontSize: 16))),
-                            DataCell(Text(content.dateConducted.toString(),
-                                style: rowData)),
-                            DataCell(Text(content.dateAccomplished.toString(),
-                                style: rowData)),
-                            DataCell(
-                                Text(content.time.toString(), style: rowData)),
-                            DataCell(Text(content.municipality.toString(),
-                                style: rowData)),
-                            DataCell(Text(content.sector.toString(),
-                                style: rowData)),
-                            DataCell(
-                                Text(content.mode.toString(), style: rowData)),
-                            DataCell(Text(content.conductedBy.toString(),
-                                style: rowData)),
-                            DataCell(Text(content.resourcePerson.toString(),
-                                style: rowData)),
-                            DataCell(Text(content.maleCount.toString(),
-                                style: rowData)),
-                            DataCell(Text(content.femaleCount.toString(),
-                                style: rowData)),
-                            DataCell(
-                                Text(content.remarks ?? '', style: rowData)),
-                            DataCell(
-                              GestureDetector(
-                                onTap: () {
-                                  final url = content.link.toString();
-                                  if (url.isNotEmpty) {
-                                    html.window.open(url, '_blank');
-                                  }
-                                },
-                                child: Text(
-                                  _truncateUrl(content.link ?? ''),
-                                  style: const TextStyle(
-                                      color: Colors.blue, fontSize: 16),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ).toList()),
-              ),
-            ),
-          ),
-        ),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
               _addActivity(context);
             },
             child: const Icon(Icons.add)),
+        body: Container(
+          color: const Color.fromARGB(26, 0, 83, 184),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                elevation: 3,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    sortAscending: isAscending,
+                    sortColumnIndex: sortColumnIndex,
+                    horizontalMargin: 10,
+                    columns: dataColumns(),
+                    rows: dataRows(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       );
     });
   }
+
+  // List of Columns for table
+  List<DataColumn> dataColumns() => [
+        DataColumn(
+          label: Checkbox(
+            value: selectAll,
+            onChanged: (newValue) {
+              setState(() {
+                selectAll = newValue!;
+                selected.clear();
+                for (var content in activities) {
+                  content.isChecked = selectAll;
+                  if (content.isChecked) {
+                    selected.add(content);
+                  }
+                }
+              });
+            },
+          ),
+        ),
+        DataColumn(onSort: onSort, label: Text(labelTitle, style: header)),
+        DataColumn(
+            onSort: onSort, label: Text(labelDateConducted, style: header)),
+        DataColumn(
+            onSort: onSort, label: Text(labelDateAccomplished, style: header)),
+        DataColumn(onSort: onSort, label: Text(labelTime, style: header)),
+        DataColumn(
+            onSort: onSort, label: Text(labelMunicipality, style: header)),
+        DataColumn(onSort: onSort, label: Text(labelSector, style: header)),
+        DataColumn(onSort: onSort, label: Text(labelMode, style: header)),
+        DataColumn(label: Text(labelConductedBy, style: header)),
+        DataColumn(label: Text(labelResourcePerson, style: header)),
+        DataColumn(label: Text(labelMaleCount, style: header)),
+        DataColumn(label: Text(labelFemaleCount, style: header)),
+        DataColumn(label: Text(labelRemarks, style: header)),
+        DataColumn(label: Text(labelLink, style: header))
+      ];
+
+  // List of Rows for table
+  List<DataRow> dataRows() => (isSearching ? filteredList : activities).map(
+        (content) {
+          return DataRow(
+            cells: [
+              DataCell(
+                Checkbox(
+                  value: content.isChecked,
+                  onChanged: (newValue) {
+                    setState(() {
+                      content.isChecked = newValue!;
+                      if (newValue == true) {
+                        selected.add(content);
+                      } else {
+                        selected.remove(content);
+                      }
+                      (selected.length ==
+                              (isSearching ? filteredList : activities).length)
+                          ? selectAll = true
+                          : selectAll = false;
+                    });
+                  },
+                ),
+              ),
+              DataCell(
+                  Text(content.title, style: const TextStyle(fontSize: 16))),
+              DataCell(Text(content.dateConducted.toString(), style: rowData)),
+              DataCell(
+                  Text(content.dateAccomplished.toString(), style: rowData)),
+              DataCell(Text(content.time.toString(), style: rowData)),
+              DataCell(Text(content.municipality.toString(), style: rowData)),
+              DataCell(Text(content.sector.toString(), style: rowData)),
+              DataCell(Text(content.mode.toString(), style: rowData)),
+              DataCell(Text(content.conductedBy.toString(), style: rowData)),
+              DataCell(Text(content.resourcePerson.toString(), style: rowData)),
+              DataCell(Text(content.maleCount.toString(), style: rowData)),
+              DataCell(Text(content.femaleCount.toString(), style: rowData)),
+              DataCell(Text(content.remarks ?? '', style: rowData)),
+              DataCell(
+                GestureDetector(
+                  onTap: () {
+                    final url = content.link.toString();
+                    if (url.isNotEmpty) {
+                      html.window.open(url, '_blank');
+                    }
+                  },
+                  child: Text(
+                    _truncateUrl(content.link ?? ''),
+                    style: const TextStyle(color: Colors.blue, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ).toList();
 
   String _truncateUrl(String url) {
     const maxLength = 20;

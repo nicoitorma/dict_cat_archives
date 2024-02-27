@@ -2,6 +2,7 @@ import 'package:dict_cat_archives/routes/dashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:particles_flutter/particles_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -67,29 +68,60 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FlutterLogin(
-      theme: LoginTheme(
-          primaryColor: Colors.grey,
-          accentColor: const Color.fromARGB(180, 0, 83, 184),
-          buttonTheme: const LoginButtonTheme(backgroundColor: Colors.green),
-          textFieldStyle: const TextStyle(color: Colors.grey),
-          titleStyle: const TextStyle(fontFamily: 'Sans'),
-          cardTheme: const CardTheme(
-              color: Colors.white, surfaceTintColor: Colors.white)),
-      title: 'DICT Archives',
-      logo: const AssetImage('assets/images/DICT-logo.png'),
-      onLogin: _authUser,
-      onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const Dashboard(),
-        ));
-      },
-      onRecoverPassword: _recoverPassword,
-      messages: LoginMessages(
-        recoverPasswordDescription:
-            'Recovery procedure will be sent to the email.',
-        recoverPasswordSuccess: 'Email sent successfully.',
+    return Stack(children: [
+      CircularParticle(
+        key: UniqueKey(),
+        awayRadius: 360,
+        numberOfParticles: 200,
+        speedOfParticles: 1,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        onTapAnimation: true,
+        particleColor: Colors.grey,
+        awayAnimationDuration: const Duration(milliseconds: 600),
+        maxParticleSize: 3,
+        isRandSize: true,
+        isRandomColor: true,
+        randColorList: const [
+          Color.fromARGB(255, 155, 11, 1),
+          Colors.white,
+          Colors.yellow,
+          Color.fromARGB(255, 2, 70, 126)
+        ],
+        awayAnimationCurve: Curves.easeInOutBack,
+        enableHover: true,
+        hoverColor: Colors.white,
+        hoverRadius: 90,
+        connectDots: true,
       ),
-    );
+      FlutterLogin(
+        theme: LoginTheme(
+            primaryColor: Colors.transparent,
+            accentColor: const Color.fromARGB(180, 0, 83, 184),
+            buttonTheme: const LoginButtonTheme(backgroundColor: Colors.green),
+            textFieldStyle: const TextStyle(
+              color: Color.fromARGB(180, 0, 83, 184),
+              fontFamily: 'Poppins',
+            ),
+            titleStyle: const TextStyle(fontFamily: 'Poppins'),
+            bodyStyle: const TextStyle(fontFamily: 'Poppins'),
+            cardTheme: CardTheme(
+                color: Colors.grey[100], surfaceTintColor: Colors.grey[100])),
+        title: 'DICT Archives',
+        logo: const AssetImage('assets/images/DICT-logo.png'),
+        onLogin: _authUser,
+        onSubmitAnimationCompleted: () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const Dashboard(),
+          ));
+        },
+        onRecoverPassword: _recoverPassword,
+        messages: LoginMessages(
+          recoverPasswordDescription:
+              'Recovery procedure will be sent to the email.',
+          recoverPasswordSuccess: 'Email sent successfully.',
+        ),
+      ),
+    ]);
   }
 }
