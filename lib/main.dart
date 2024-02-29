@@ -1,5 +1,5 @@
 import 'package:dict_cat_archives/firebase_options.dart';
-import 'package:dict_cat_archives/providers/project_content_provider.dart';
+import 'package:dict_cat_archives/providers/activities_provider.dart';
 import 'package:dict_cat_archives/providers/project_provider.dart';
 import 'package:dict_cat_archives/routes/login.dart';
 import 'package:dict_cat_archives/strings.dart';
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProjectListProvider()),
-        ChangeNotifierProvider(create: (_) => ProjectContentsProvider())
+        ChangeNotifierProvider(create: (_) => ActivityProvider())
       ],
       child: MaterialApp(
         title: appName,

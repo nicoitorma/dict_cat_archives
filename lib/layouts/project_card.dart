@@ -25,7 +25,7 @@ class ProjectCard extends BaseCard {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: const Color.fromARGB(193, 209, 209, 209),
+                color: const Color.fromARGB(26, 0, 83, 184),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

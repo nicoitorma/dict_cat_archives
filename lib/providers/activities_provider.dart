@@ -1,8 +1,8 @@
-import 'package:dict_cat_archives/firebase_query/project_contents_query.dart';
+import 'package:dict_cat_archives/firebase_query/activities_query.dart';
 import 'package:dict_cat_archives/models/activity_info.dart';
 import 'package:flutter/material.dart';
 
-class ProjectContentsProvider extends ChangeNotifier {
+class ActivityProvider extends ChangeNotifier {
   List<ActivityInfo> projectContents = [];
 
   fetchActivity(String docId) async {
@@ -16,8 +16,8 @@ class ProjectContentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addActivity(ActivityInfo projectInfo, int count) async {
-    await addProjectToFirebase(projectInfo, count);
+  addActivity(ActivityInfo projectInfo) async {
+    await addProjectToFirebase(projectInfo);
     projectContents.add(projectInfo);
     notifyListeners();
   }

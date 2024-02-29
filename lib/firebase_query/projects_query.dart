@@ -41,6 +41,13 @@ addNewProject(Project project) async {
   }
 }
 
+updateActivityCountFirebase(String docId, int count) async {
+  await db
+      .collection(labelAboutsCollection)
+      .doc(docId)
+      .update({'count': count});
+}
+
 deleteProjectOnFirebase(Project project) async {
   try {
     DocumentReference projectRef =

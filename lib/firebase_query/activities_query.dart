@@ -30,7 +30,7 @@ Future<List<ActivityInfo>> fetchAllProjectContents(String docId) async {
   return projectsContentsList;
 }
 
-addProjectToFirebase(ActivityInfo projectInfo, int count) async {
+addProjectToFirebase(ActivityInfo projectInfo) async {
   try {
     await db.collection(labelProjectCollection).doc(projectInfo.docId).update({
       projectInfo.title: {
@@ -48,10 +48,6 @@ addProjectToFirebase(ActivityInfo projectInfo, int count) async {
         'link': projectInfo.link
       }
     });
-    await db
-        .collection(labelAboutsCollection)
-        .doc(projectInfo.docId)
-        .update({'count': count + 1});
   } catch (err) {
     debugPrint(err.toString());
   }

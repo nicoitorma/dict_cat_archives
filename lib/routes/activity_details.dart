@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dict_cat_archives/layouts/app_bar.dart';
 import 'package:dict_cat_archives/models/activity_info.dart';
-import 'package:dict_cat_archives/providers/project_content_provider.dart';
+import 'package:dict_cat_archives/providers/activities_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,7 +22,7 @@ class _ActivityDetailsState extends State<ActivityDetails> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: CustomAppBar(title: Text(widget.activityInfo.title)),
-      body: Consumer<ProjectContentsProvider>(
+      body: Consumer<ActivityProvider>(
         builder: (context, value, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

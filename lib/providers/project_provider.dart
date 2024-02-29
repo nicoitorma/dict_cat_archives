@@ -26,4 +26,8 @@ class ProjectListProvider extends ChangeNotifier {
     await deleteProjectOnFirebase(project);
     fetchProjects();
   }
+
+  updateActivityCount(String docId, int count) async {
+    await updateActivityCountFirebase(docId, count);
+  }
 }

@@ -1,7 +1,8 @@
 import 'package:dict_cat_archives/layouts/app_bar.dart';
 import 'package:dict_cat_archives/models/activity_info.dart';
 import 'package:dict_cat_archives/models/project.dart';
-import 'package:dict_cat_archives/providers/project_content_provider.dart';
+import 'package:dict_cat_archives/providers/activities_provider.dart';
+import 'package:dict_cat_archives/providers/project_provider.dart';
 import 'package:dict_cat_archives/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,6 @@ class ProjectContents extends StatefulWidget {
 class _ProjectContentsState extends State<ProjectContents> {
   TextStyle header = const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
   TextStyle rowData = const TextStyle(fontSize: 16);
-  late ProjectContentsProvider provider;
   bool selectAll = false;
   List<ActivityInfo> selected = [];
   bool isSearching = false;
@@ -26,12 +26,15 @@ class _ProjectContentsState extends State<ProjectContents> {
   int? sortColumnIndex;
   bool isAscending = false;
   late List<ActivityInfo> activities;
+  late ProjectListProvider projectProvider;
+  late ActivityProvider activityProvider;
 
   @override
   void initState() {
     super.initState();
-    provider = Provider.of<ProjectContentsProvider>(context, listen: false);
-    provider.fetchActivity(widget.project.docId);
+    activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+    projectProvider = Provider.of<ProjectListProvider>(context, listen: false);
+    activityProvider.fetchActivity(widget.project.docId);
   }
 
   @override
@@ -62,7 +65,7 @@ class _ProjectContentsState extends State<ProjectContents> {
         setState(() {
           isSearching = query.isNotEmpty;
           if (!isSearching) filteredList.clear();
-          filteredList = provider.projectContents
+          filteredList = activityProvider.projectContents
               .where((content) =>
                   content.title.toLowerCase().contains(query.toLowerCase()))
               .toList();
@@ -101,8 +104,9 @@ class _ProjectContentsState extends State<ProjectContents> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProjectContentsProvider>(builder: (context, value, child) {
+    return Consumer<ActivityProvider>(builder: (context, value, child) {
       activities = value.projectContents;
+      updateActivityCount(widget.project.docId, activities.length);
       return Scaffold(
         appBar: CustomAppBar(
             title:
@@ -121,23 +125,22 @@ class _ProjectContentsState extends State<ProjectContents> {
                             content: Text(labelDeleteActivity),
                             actions: [
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.of(context, rootNavigator: true)
-                                        .pop(),
+                                onPressed: () => Navigator.of(
+                                  context,
+                                ).pop(),
                                 child: Text(labelCancel),
                               ),
                               TextButton(
                                 onPressed: () async {
-                                  final currentContext = context;
-
                                   value
                                       .deleteActivity(selected,
                                           value.projectContents.length)
                                       .then((_) {
-                                    Navigator.of(currentContext,
-                                            rootNavigator: true)
-                                        .pop();
+                                    Navigator.of(
+                                      context,
+                                    ).pop();
                                     selected.clear();
+                                    selectAll = false;
                                   });
                                 },
                                 child: Text(labelDelete),
@@ -161,13 +164,18 @@ class _ProjectContentsState extends State<ProjectContents> {
               child: Card(
                 elevation: 3,
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    sortAscending: isAscending,
-                    sortColumnIndex: sortColumnIndex,
-                    horizontalMargin: 10,
-                    columns: dataColumns(),
-                    rows: dataRows(),
+                  scrollDirection: Axis.vertical,
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        sortAscending: isAscending,
+                        sortColumnIndex: sortColumnIndex,
+                        horizontalMargin: 10,
+                        columns: dataColumns(),
+                        rows: dataRows(),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -176,6 +184,11 @@ class _ProjectContentsState extends State<ProjectContents> {
         ),
       );
     });
+  }
+
+  updateActivityCount(String docId, int count) {
+    projectProvider.updateActivityCount(
+        widget.project.docId, activities.length);
   }
 
   // List of Columns for table
@@ -239,8 +252,10 @@ class _ProjectContentsState extends State<ProjectContents> {
                   },
                 ),
               ),
-              DataCell(
-                  Text(content.title, style: const TextStyle(fontSize: 16))),
+              DataCell(Text(
+                  overflow: TextOverflow.ellipsis,
+                  content.title,
+                  style: const TextStyle(fontSize: 16))),
               DataCell(Text(content.dateConducted.toString(), style: rowData)),
               DataCell(
                   Text(content.dateAccomplished.toString(), style: rowData)),
@@ -575,7 +590,7 @@ class _ProjectContentsState extends State<ProjectContents> {
         maleCount: int.tryParse(male.text),
         femaleCount: int.tryParse(female.text));
 
-    provider.addActivity(projectInfo, widget.project.count!);
+    activityProvider.addActivity(projectInfo);
     clearTextFields();
     Navigator.of(context).pop();
   }
